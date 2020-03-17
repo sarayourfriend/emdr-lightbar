@@ -14,9 +14,11 @@ socketio = SocketIO(app)
 def send_static(path):
     return send_from_director('static', path)
 
+
 @app.route('/')
 def index():
     return send_from_directory('static', 'index.html')
+
 
 @app.route('/s/')
 def new_session():
