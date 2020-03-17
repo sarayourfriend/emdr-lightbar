@@ -4,6 +4,10 @@ A simple EMDR lightbar app for therapists to be able to do EMDR therapy with rem
 
 This was inspired by my own therapist's remarks during our first therapy session at the start of the 2020 Coronavirus lockdown in the US and my own desire to be able to continue EMDR therapy during the quarantine.
 
+![emdr-lightbar-demo](https://user-images.githubusercontent.com/24264157/76837761-54c17d00-67f0-11ea-80a4-0e1de85b4dcf.gif)
+
+<small><strong>Note:</strong> the animated demo above is choppy due to frames being dropped in the GIF. When the app is actually running, the animation is smooth and appropriate for EMDR therapy.</small>
+
 ## What's the problem with video chat?
 
 No matter how good a video chat is, almost all of them have some degree of latency, and many clients may have low-bandwidth connections, making lag on video chats pretty distracting for finger or remote-lightbar EMDR. Even when there isn't lag, most webcams introduce some amount of blurring with rapid movement, which EMDR obviously requires. This can also be distracting to the client, making it difficult to focus on the already hard work of trauma therapy.
