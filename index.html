@@ -1,0 +1,28 @@
+<html>
+<head>
+  <title>Lightbar</title>
+  <link rel="stylesheet" href="./index.css" />
+</head>
+<body>
+  <div id="controls">
+    <label id="light-width">
+      Light width:
+      <input type="range" name="light-width" onchange="handleLightWidthChange(this.value)" />
+    </label>
+
+    <label id="light-speed">
+      Light speed:
+      <input type="range" name="light-speed" onchange="handleLightSpeedChange(this.value)" />
+    </label>
+
+    <button type="button" name="start" onclick="toggleBounce(this)">Start</button>
+  </div>
+
+  <div id="light-container">
+    <div id="lightbar">
+      <div id="light"></div>
+    </div>
+  </div>
+
+  <script src="./index.js"></script>
+</body>
