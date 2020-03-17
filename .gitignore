@@ -1,1 +1,3 @@
 venv
+*sublime-*
+__pycache__

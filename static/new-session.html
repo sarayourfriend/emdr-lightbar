@@ -1,0 +1,29 @@
+<html>
+<head>
+  <title>Lightbar</title>
+  <link rel="stylesheet" href="/static/new-session.css" />
+  <link rel="stylesheet" href="/static/lib/Lightbar.css" />
+</head>
+<body>
+  <div id="controls">
+    <label id="light-width">
+      Light width:
+      <input type="range" name="light-width" />
+    </label>
+
+    <label id="light-speed">
+      Light speed:
+      <input type="range" name="light-speed" />
+    </label>
+
+    <button type="button" name="start">Start</button>
+    <a href="#" id="link-display"></a>
+  </div>
+
+  <div id="light-container"></div>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+  <script src="/static/lib/Lightbar.js"></script>
+  <script src="/static/lib/SessionControls.js"></script>
+  <script src="/static/new-session.js"></script>
+</body>

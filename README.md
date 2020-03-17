@@ -12,9 +12,9 @@ This app solves the problem by allowing a therapist to share a short link with a
 
 ## What currently works?
 
-Right now the app is just a proof of concept of a lightbar configurable across speed and light width. The width of the bar itself is configurable in a round-about way by changing the width of the browser.
+You can create a session as a therapist and connect as a client. Once you have access to the app, follow the instructions on the index page to set up a therapist and client session.
 
-## Roadmap
+## Feature Roadmap
 
 1.  Generating a client link and saving it as the current link in the therapist's session
 2.  Connecting a websocket from the client's browser to the therapist so that:
@@ -22,18 +22,37 @@ Right now the app is just a proof of concept of a lightbar configurable across s
 4.  The therapist is able to see and control the light's width and speed
 5.  The therpaist's changes to the width of the bar and the lights width and speed are immediately reflected on the client's screen
 6.  The therapist is able to control the background color of the page as well as the color of the lightbar outline and light itself
-    * When displaying the current "theme" to the therapist, the controls on the page should not be affected. This will cut the scope of the theming ability so we don't need to worry about the contrast of the controls' text—they'll simply always be black text on a white background
-    * We should be able to implement a dark-mode setting in the future to accomodate OS/browser level dark-mode settings
+    *   When displaying the current "theme" to the therapist, the controls on the page should not be affected. This will cut the scope of the theming ability so we don't need to worry about the contrast of the controls' text—they'll simply always be black text on a white background
+    *   We should be able to implement a dark-mode setting in the future to accomodate OS/browser level dark-mode settings
 7.  The therapist is able to start and stop the movement of the light
 
 ### Future ideas
 
-* Add a sound option so that therapists are able to offer audio-based bi-lateral stimulation
+*   Add a sound option so that therapists are able to offer audio-based bi-lateral stimulation
 
 ## Technology used
 
-* Flask for the backend
-  * This was chosen over Django simply because the app is so minimal, there's no real reason to use anything heavier. We only have two endpoints, one to serve the frontend and one to connect the websockets. Session management is simple in flask.
-* Vanilla JS, HTML and CSS for the frontend
-  * Even though this is going to make theming a little bit of a drag, the functionality of the frontend is so simple that there's really no call for any kind of UI, state, or style management library
-  * I think that if the application became complex enough such that it would benefit greatly from the usage of such technologies, we might be adding too many features to it
+*   Flask for the backend
+    *   This was chosen over Django simply because the app is so minimal, there's no real reason to use anything heavier. We only have two endpoints, one to serve the frontend and one to connect the websockets. Session management is simple in flask.
+*   Vanilla JS, HTML and CSS for the frontend
+    *   Even though this is going to make theming a little bit of a drag, the functionality of the frontend is so simple that there's really no call for any kind of UI, state, or style management library
+    *   I think that if the application became complex enough such that it would benefit greatly from the usage of such technologies, we might be adding too many features to it
+*   SocketIO because it's not necessary to invent a new websocket protocol for this
+
+# Development
+
+To run locally:
+
+1.  Install python3
+2.  Clone the repo
+3.  Create a venv: `python3 -m venv venv`
+4.  Initialize the venv: `. venv/bin/activate`
+5.  Install dependencies: `pip install -r requirements.txt`
+6.  Run the server: `env FLASK_ENV=development venv/bin/python app.py`
+
+## Tech TODOs
+
+*   [ ] Dockerize the app
+*   [ ] Add deployment instructions
+*   [ ] Grab the secret key from the environment instead of hard-coding it
+*   [ ] Add ability to generate a new session ID

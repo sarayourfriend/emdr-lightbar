@@ -155,6 +155,11 @@ function toggleBounce(startButton) {
 
 (function init() {
   // use the browsers saved form data if it exists
-  handleLightSpeedChange(document.querySelector('[name="light-speed"]').value);
-  handleLightWidthChange(document.querySelector('[name="light-width"]').value);
+  // handleLightSpeedChange(document.querySelector('[name="light-speed"]').value);
+  // handleLightWidthChange(document.querySelector('[name="light-width"]').value);
+
+  window.lb = new Lightbar(document.getElementById('light-container'));
+//   const socket = io();
+// 
+//   socket.emit('therapist-connect');
 })()
