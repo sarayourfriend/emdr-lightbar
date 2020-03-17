@@ -1,6 +1,8 @@
 # EMDR Lightbar
 
-A simple EMDR lightbar app for therapists to be able to do EMDR therapy with remote clients
+A simple EMDR lightbar app for therapists to be able to do EMDR therapy with remote clients.
+
+This was inspired by my own therapist's remarks during our first therapy session at the start of the 2020 Coronavirus lockdown in the US and my own desire to be able to continue EMDR therapy during the quarantine.
 
 ## What's the problem with video chat?
 
@@ -14,17 +16,19 @@ This app solves the problem by allowing a therapist to share a short link with a
 
 You can create a session as a therapist and connect as a client. Once you have access to the app, follow the instructions on the index page to set up a therapist and client session.
 
+Start the light's movement as a therapist by clicking the "Start" button. If you open the session URL in a private tab, and change the settings in the therapist tab, you should see them immediately reflected in the client tab.
+
+**Note:** Both tabs must be open before the therapist begins modifying the lightbar behavior or else the settings will potentially start out of sync. Changing the settings just one time once both the therapist and the client are connected will sync the settings. After the first time, they will continue to stay in sync.
+
 ## Feature Roadmap
 
-1.  Generating a client link and saving it as the current link in the therapist's session
-2.  Connecting a websocket from the client's browser to the therapist so that:
-3.  The therapist is able to see and control the width of the light bar replicated on their screen
-4.  The therapist is able to see and control the light's width and speed
-5.  The therpaist's changes to the width of the bar and the lights width and speed are immediately reflected on the client's screen
-6.  The therapist is able to control the background color of the page as well as the color of the lightbar outline and light itself
+1.  The therapist is able to control the background color of the page as well as the color of the lightbar outline and light itself
     *   When displaying the current "theme" to the therapist, the controls on the page should not be affected. This will cut the scope of the theming ability so we don't need to worry about the contrast of the controls' text—they'll simply always be black text on a white background
     *   We should be able to implement a dark-mode setting in the future to accomodate OS/browser level dark-mode settings
-7.  The therapist is able to start and stop the movement of the light
+2.  The therapist is able to start and stop the movement of the light
+3.  The therapist is able to control the width of the lightbar itself
+4.  Make the site prettier in general
+5.  Save and load settings out of local storage so the therapist can persist settings across sessions
 
 ### Future ideas
 
@@ -33,7 +37,7 @@ You can create a session as a therapist and connect as a client. Once you have a
 ## Technology used
 
 *   Flask for the backend
-    *   This was chosen over Django simply because the app is so minimal, there's no real reason to use anything heavier. We only have two endpoints, one to serve the frontend and one to connect the websockets. Session management is simple in flask.
+    *   The backend for this is so simple there's no real reason to use anything heavier. Even if we keep adding more controls for the therapist, that will only increase the complexity of the front-end as we can continue to use the same generic "<actor>-new-settings" events to send and receive any arbitrary new settings we want.
 *   Vanilla JS, HTML and CSS for the frontend
     *   Even though this is going to make theming a little bit of a drag, the functionality of the frontend is so simple that there's really no call for any kind of UI, state, or style management library
     *   I think that if the application became complex enough such that it would benefit greatly from the usage of such technologies, we might be adding too many features to it
@@ -55,4 +59,4 @@ To run locally:
 *   [ ] Dockerize the app
 *   [ ] Add deployment instructions
 *   [ ] Grab the secret key from the environment instead of hard-coding it
-*   [ ] Add ability to generate a new session ID
+*   [ ] Minify/mangle JS and CSS
