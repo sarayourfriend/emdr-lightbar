@@ -20,10 +20,21 @@ def index():
     return send_from_directory('static', 'index.html')
 
 
-@app.route('/s/')
+@app.route('/s/', methods=['GET', 'POST'])
 def new_session():
-    if 'session_id' not in session:
+    """
+    Creates a new session for a therapist if one does not already exist.
+    On POST, it forces the creation of a new session (this is how a
+    therapist is able to refresh their session ID)
+    """
+    should_create_session_id = (
+        (request.method == 'GET' and 'session_id' not in session)
+        or request.method == 'POST'
+    )
+
+    if should_create_session_id:
         session['session_id'] = new_session_id()
+
     return send_from_directory('static', 'new-session.html')
 
 
