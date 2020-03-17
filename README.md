@@ -60,3 +60,4 @@ To run locally:
 *   [ ] Add deployment instructions
 *   [ ] Grab the secret key from the environment instead of hard-coding it
 *   [ ] Minify/mangle JS and CSS
+*   [ ] Prevent session URL collisions

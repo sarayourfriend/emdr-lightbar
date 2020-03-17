@@ -1,10 +1,20 @@
 #controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 #controls > * {
-  margin-bottom: 1em;
+    margin-bottom: 1em;
+}
+
+#controls > label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#controls > label > input {
+    margin-left: 1em;
 }
