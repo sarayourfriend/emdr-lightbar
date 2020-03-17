@@ -1,6 +1,6 @@
 (function() {
 	const lb = new Lightbar(document.getElementById('light-container'));
-	const controls = new SessionControls(
+	new TherapistLightbarController(
 		lb,
 		document.querySelector('[name="light-width"]'),
 		document.querySelector('[name="light-speed"]'),

@@ -1,5 +1,13 @@
 (function() {
-	function SessionControls(
+	/**
+	 * Manages the therapists controls for the lightbar.
+	 * @param {Lightbar} lightbar        A lightbar to control
+	 * @param {HTMLRangeElement} lightWidthRange Range input for controlling the light element's width
+	 * @param {HTMLRangeElement} lightSpeedRange Range input for controlling the speed of the light element
+	 * @param {HTMLButtonElement} startButton     Button for toggling the light's movement on and off
+	 * @param {HTMLElement} linkDisplay     An element to display the current session URL into
+	 */
+	function TherapistLightbarController(
 		lightbar,
 		lightWidthRange,
 		lightSpeedRange,
@@ -21,7 +29,7 @@
 		this.initSocket();
 	}
 
-	SessionControls.prototype.initSocket = function() {
+	TherapistLightbarController.prototype.initSocket = function() {
 		this.socket = io();
 
 		// Emit the init event which prompts the server to respond with
@@ -31,25 +39,26 @@
 		this.socket.on('therapist-session-id', this.saveSessionId.bind(this));
 	};
 
-	SessionControls.prototype.saveSessionId = function(sessionId) {
+	TherapistLightbarController.prototype.saveSessionId = function(sessionId) {
 		this.sessionId = sessionId;
 		const link = window.location.href + sessionId + '/';
 		this.linkDisplay.href = link;
 		this.linkDisplay.innerText = link;
 	};
 
-	SessionControls.prototype.emitNewSettings = function() {
+	TherapistLightbarController.prototype.emitNewSettings = function() {
+		// The Lightbar class manages its own serialization in Lightbar.prototype.toJSON
 		this.socket.emit('therapist-new-settings', this.lightbar);
 	};
 
-	SessionControls.prototype.handleLightWidthChange = function(event) {
+	TherapistLightbarController.prototype.handleLightWidthChange = function(event) {
 		const value = event.target.value;
 		const percentage = parseInt(value) / 100;
 		this.lightbar.updateLightWidth((10 * percentage) + 'em');
 		this.emitNewSettings();
 	};
 
-	SessionControls.prototype.handleLightSpeedChange = function(event) {
+	TherapistLightbarController.prototype.handleLightSpeedChange = function(event) {
 		const value = event.target.value;
 		const percentage = parseInt(value) / 100;
 		const newSpeed = ((this.maxSpeed - this.minSpeed) * percentage) + this.minSpeed;
@@ -57,7 +66,7 @@
 		this.emitNewSettings();
 	};
 
-	SessionControls.prototype.toggleBounce = function() {
+	TherapistLightbarController.prototype.toggleBounce = function() {
 		if (this.lightbar.isBouncing()) {
 			this.startButton.innerText = 'Start';
 			this.lightbar.stopBounce();
@@ -69,5 +78,5 @@
 		this.emitNewSettings();
 	};
 
-	window.SessionControls = SessionControls;
+	window.TherapistLightbarController = TherapistLightbarController;
 })();

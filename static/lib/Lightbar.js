@@ -10,7 +10,7 @@
 	 * the client's lightbars, so it should not include
 	 * anything specific to the controls for configuring the
 	 * appearance or behavior of the lightbar. That stuff
-	 * should live in SessionControls.
+	 * should live in TherapistLightbarController.
 	 *
 	 * @param {HTMLElement} rootElement The element into which the Lighbar should be rendered
 	 * @param {?Object} initialData Optional initial settings for the lighbar appearance and behavior
