@@ -4,7 +4,7 @@ monkey.patch_all()
 import os
 
 import dotenv
-from flask import Flask, escape, request, send_from_directory, session
+from flask import Flask, escape, request, send_from_directory, session, render_template, url_for
 from flask_socketio import SocketIO, send, emit
 
 from utils import new_session_id
@@ -33,16 +33,16 @@ socketio = SocketIO(
 
 @app.route('/static/<path:path>')
 def send_static(path):
-    return send_from_director('static', path)
+    return send_from_directory('static', path)
 
 
 @app.route('/')
 def index():
-    return send_from_directory('static', 'index.html')
+    return render_template('index/index.html')
 
 
 @app.route('/s/', methods=['GET', 'POST'])
-def new_session():
+def therapist_session():
     """
     Creates a new session for a therapist if one does not already exist.
     On POST, it forces the creation of a new session (this is how a
@@ -56,29 +56,23 @@ def new_session():
     if should_create_session_id:
         session['session_id'] = new_session_id()
 
-    return send_from_directory('static', 'new-session.html')
+    session_url = url_for('patient_session', session_id=session['session_id'], _external=True)
+
+    return render_template(
+        'therapist/session.html',
+        session_url=session_url)
 
 
 @app.route('/s/<session_id>/')
-def join_session(session_id):
-    return send_from_directory('static', 'client-session.html')
-
-
-@socketio.on('therapist-session-init')
-def handle_therapist_connect():
-    """
-    Shares the therapists current session ID with the therapists browser.
-    This allows us to emit client-new-settings only to clients connected
-    to the therapists current session URL.
-    """
-    emit('therapist-session-id', session['session_id'])
+def patient_session(session_id):
+    return render_template('patient/session.html')
 
 
 @socketio.on('therapist-new-settings')
 def handle_new_settings(new_settings):
     session_id = session['session_id']
     namespace = f'/s/{session_id}/'
-    emit('client-new-settings', new_settings, namespace=namespace, broadcast=True)
+    emit('patient-new-settings', new_settings, namespace=namespace, broadcast=True)
 
 
 if __name__ == '__main__':

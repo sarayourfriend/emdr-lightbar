@@ -32,25 +32,12 @@
 
 	TherapistLightbarController.prototype.initSocket = function() {
 		this.socket = io();
-
-		// Emit the init event which prompts the server to respond with
-		// the session-id event which in turn provides us with the session
-		// id to display in the link.
-		this.socket.emit('therapist-session-init');
-		this.socket.on('therapist-session-id', this.saveSessionId.bind(this));
 	};
 
 	TherapistLightbarController.prototype.initSpeedAndWidth = function() {
 		this._updateLightWidth();
 		this._updateLightSpeed();
 		this.emitNewSettings();
-	};
-
-	TherapistLightbarController.prototype.saveSessionId = function(sessionId) {
-		this.sessionId = sessionId;
-		const link = window.location.href + sessionId + '/';
-		this.linkDisplay.href = link;
-		this.linkDisplay.innerText = link;
 	};
 
 	TherapistLightbarController.prototype.emitNewSettings = function() {
