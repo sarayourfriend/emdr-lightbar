@@ -14,7 +14,9 @@ dotenv.load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
-socketio_kwargs = {}
+socketio_kwargs = {
+    'async_mode': 'threading',
+}
 
 if os.getenv('FLASK_ENV') == 'production':
     socketio_kwargs = {
