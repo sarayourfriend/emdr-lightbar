@@ -21,7 +21,7 @@ socketio_kwargs = {
 if os.getenv('FLASK_ENV') == 'production':
     socketio_kwargs = {
         'async_mode': 'gevent_uwsgi',
-        'message_queue': os.getenv('REDIS_SERVER_URL'),
+        'message_queue': os.getenv('REDIS_URL'),
     }
 
 
