@@ -27,6 +27,7 @@
 		this.startButton.onclick = this.toggleBounce.bind(this);
 
 		this.initSocket();
+		this.initSpeedAndWidth();
 	}
 
 	TherapistLightbarController.prototype.initSocket = function() {
@@ -37,6 +38,12 @@
 		// id to display in the link.
 		this.socket.emit('therapist-session-init');
 		this.socket.on('therapist-session-id', this.saveSessionId.bind(this));
+	};
+
+	TherapistLightbarController.prototype.initSpeedAndWidth = function() {
+		this._updateLightWidth();
+		this._updateLightSpeed();
+		this.emitNewSettings();
 	};
 
 	TherapistLightbarController.prototype.saveSessionId = function(sessionId) {
@@ -51,18 +58,26 @@
 		this.socket.emit('therapist-new-settings', this.lightbar);
 	};
 
-	TherapistLightbarController.prototype.handleLightWidthChange = function(event) {
-		const value = event.target.value;
+	TherapistLightbarController.prototype._updateLightWidth = function() {
+		const value = this.lightWidthRange.value;
 		const percentage = parseInt(value) / 100;
 		this.lightbar.updateLightWidth((30 * percentage) + '%');
+	};
+
+	TherapistLightbarController.prototype.handleLightWidthChange = function() {
+		this._updateLightWidth();
 		this.emitNewSettings();
 	};
 
-	TherapistLightbarController.prototype.handleLightSpeedChange = function(event) {
-		const value = event.target.value;
+	TherapistLightbarController.prototype._updateLightSpeed = function() {
+		const value = this.lightSpeedRange.value;
 		const percentage = parseInt(value) / 100;
 		const newSpeed = ((this.maxSpeed - this.minSpeed) * percentage) + this.minSpeed;
 		this.lightbar.updateLightSpeed(newSpeed);
+	};
+
+	TherapistLightbarController.prototype.handleLightSpeedChange = function() {
+		this._updateLightSpeed();
 		this.emitNewSettings();
 	};
 
