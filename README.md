@@ -46,6 +46,10 @@ Start the light's movement as a therapist by clicking the "Start" button. If you
     *   I think that if the application became complex enough such that it would benefit greatly from the usage of such technologies, we might be adding too many features to it
 *   SocketIO because it's not necessary to invent a new websocket protocol for this
 
+## Running
+
+Install Docker, and then a simple `docker-compose up` will run the application on port 80 of localhost with nginx in front of four workers, each with uWSGI and gevent.
+
 # Development
 
 To run locally:
@@ -57,8 +61,6 @@ To run locally:
 5.  Install dependencies: `pip install -r requirements.txt`
 6.  Add a `.env` file with `FLASK_SECRET_KEY` set to something (can be anything in dev)
 7.  Run the Flask development server: `env FLASK_ENV=development python ./app/app.py`
-
-To run the production uwsgi server, ensure your `.env` file has `FLASK_ENV=production` and run: `uwsgi --ini ./uwsgi.ini`
 
 # Tech TODOs
 
