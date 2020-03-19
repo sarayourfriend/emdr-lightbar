@@ -64,9 +64,5 @@ To run locally:
 
 # Tech TODOs
 
-*   [ ] Dockerize the app
-*   [ ] Add deployment instructions
-*   [ ] Grab the secret key from the environment instead of hard-coding it
 *   [ ] Minify/mangle JS and CSS
 *   [ ] Prevent session URL collisions
-*   [ ] Use Jinja templates instead of vanilla HTML
