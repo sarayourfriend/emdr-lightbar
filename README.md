@@ -36,6 +36,9 @@ Start the light's movement as a therapist by clicking the "Start" button. If you
 ### Future ideas
 
 *   Add a sound option so that therapists are able to offer audio-based bi-lateral stimulation
+    *   Pitch controls
+    *   Visual representation of left and right speaker to give feedback to therapist that it's working
+    *   What do we show on the patients screen?
 
 ## Technology used
 
@@ -64,5 +67,8 @@ To run locally:
 
 # Tech TODOs
 
-*   [ ] Minify/mangle JS and CSS
+*   [ ] Minify/mangle JS and CSS and run through babel so we can use fully modern JS
 *   [ ] Prevent session URL collisions
+*   [ ] Have the patient ping for updated lightbar settings on pageload
+*   [ ] Mobile view
+*   [ ] Add ability to show/hide the help text on the therapist view
