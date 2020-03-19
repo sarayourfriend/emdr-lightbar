@@ -84,4 +84,6 @@ def handle_new_settings(new_settings):
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(
+        app,
+        port=os.getenv('PORT', 5000))
