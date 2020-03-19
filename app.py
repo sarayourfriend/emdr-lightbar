@@ -1,12 +1,16 @@
 import random
+import os
 
+import dotenv
 from flask import Flask, escape, request, send_from_directory, session
 from flask_socketio import SocketIO, send, emit
 
 from utils import new_session_id
 
+dotenv.load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = b'replace-me-later'
+app.secret_key = os.getenv('FLASK_SECRET_KEY')
 socketio = SocketIO(app)
 
 
