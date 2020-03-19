@@ -1,4 +1,6 @@
-import random
+from gevent import monkey
+monkey.patch_all()
+
 import os
 
 import dotenv
@@ -11,7 +13,20 @@ dotenv.load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
-socketio = SocketIO(app)
+
+socketio_kwargs = {}
+
+if os.getenv('FLASK_ENV') == 'production':
+    socketio_kwargs = {
+        'async_mode': 'gevent_uwsgi',
+        'message_queue': os.getenv('REDIS_SERVER_URL'),
+    }
+
+
+socketio = SocketIO(
+    app,
+    **socketio_kwargs
+)
 
 
 @app.route('/static/<path:path>')

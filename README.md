@@ -29,10 +29,9 @@ Start the light's movement as a therapist by clicking the "Start" button. If you
 1.  The therapist is able to control the background color of the page as well as the color of the lightbar outline and light itself
     *   When displaying the current "theme" to the therapist, the controls on the page should not be affected. This will cut the scope of the theming ability so we don't need to worry about the contrast of the controls' text—they'll simply always be black text on a white background
     *   We should be able to implement a dark-mode setting in the future to accomodate OS/browser level dark-mode settings
-2.  The therapist is able to start and stop the movement of the light
-3.  The therapist is able to control the width of the lightbar itself
-4.  Make the site prettier in general
-5.  Save and load settings out of local storage so the therapist can persist settings across sessions
+2.  The therapist is able to control the width of the lightbar itself
+3.  Make the site prettier in general
+4.  Save and load settings out of local storage so the therapist can persist settings across sessions
 
 ### Future ideas
 
@@ -57,12 +56,15 @@ To run locally:
 4.  Initialize the venv: `. venv/bin/activate`
 5.  Install dependencies: `pip install -r requirements.txt`
 6.  Add a `.env` file with `FLASK_SECRET_KEY` set to something (can be anything in dev)
-7.  Run the server: `env FLASK_ENV=development venv/bin/python app.py`
+7.  Run the Flask development server: `env FLASK_ENV=development python app.py`
 
-## Tech TODOs
+To run the production uwsgi server, ensure your `.env` file has `FLASK_ENV=production` and run: `uwsgi --ini ./uwsgi.ini`
+
+# Tech TODOs
 
 *   [ ] Dockerize the app
 *   [ ] Add deployment instructions
 *   [ ] Grab the secret key from the environment instead of hard-coding it
 *   [ ] Minify/mangle JS and CSS
 *   [ ] Prevent session URL collisions
+*   [ ] Use Jinja templates instead of vanilla HTML
