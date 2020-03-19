@@ -56,7 +56,7 @@ To run locally:
 4.  Initialize the venv: `. venv/bin/activate`
 5.  Install dependencies: `pip install -r requirements.txt`
 6.  Add a `.env` file with `FLASK_SECRET_KEY` set to something (can be anything in dev)
-7.  Run the Flask development server: `env FLASK_ENV=development python app.py`
+7.  Run the Flask development server: `env FLASK_ENV=development python ./app/app.py`
 
 To run the production uwsgi server, ensure your `.env` file has `FLASK_ENV=production` and run: `uwsgi --ini ./uwsgi.ini`
 
