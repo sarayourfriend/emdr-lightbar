@@ -54,7 +54,7 @@
 	TherapistLightbarController.prototype.handleLightWidthChange = function(event) {
 		const value = event.target.value;
 		const percentage = parseInt(value) / 100;
-		this.lightbar.updateLightWidth((10 * percentage) + 'em');
+		this.lightbar.updateLightWidth((30 * percentage) + '%');
 		this.emitNewSettings();
 	};
 

@@ -32,7 +32,7 @@
 			minMarginLeft: 0,
 			maxMarginLeft: this.getMaxMarginLeft(),
 			// @todo use lightWidth to set the initial width of the light element
-			lightWidth: '2em',
+			lightWidth: '2%',
 		}, initialData);
 
 		this._doBounce = this._doBounce.bind(this);
