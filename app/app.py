@@ -56,7 +56,10 @@ def therapist_session():
     if should_create_session_id:
         session['session_id'] = new_session_id()
 
-    session_url = url_for('patient_session', session_id=session['session_id'], _external=True)
+    session_url = url_for(
+        'patient_session',
+        session_id=session['session_id'],
+        _external=True)
 
     return render_template(
         'therapist/session.html',
@@ -66,6 +69,11 @@ def therapist_session():
 @app.route('/s/<session_id>/')
 def patient_session(session_id):
     return render_template('patient/session.html')
+
+
+@app.errorhandler(404)
+def page_notfound(e):
+    return render_template('error/404.html')
 
 
 @socketio.on('therapist-new-settings')
