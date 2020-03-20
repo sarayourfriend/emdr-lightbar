@@ -6,6 +6,7 @@
 
 {% block content %}
     {% include "therapist/_help.html" %}
+    {% include "therapist/_session_info.html" %}
     {% include "therapist/_controls.html" %}
     {% include "shared/_light-container.html" %}
 {% endblock %}
@@ -14,5 +15,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script src="/static/lib/Lightbar.js"></script>
     <script src="/static/lib/TherapistLightbarController.js"></script>
+    <script src="/static/lib/HelpController.js"></script>
     <script src="/static/therapist-session.js"></script>
 {% endblock %}

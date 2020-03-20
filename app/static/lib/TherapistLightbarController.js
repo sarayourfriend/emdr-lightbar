@@ -5,14 +5,12 @@
 	 * @param {HTMLRangeElement} lightWidthRange Range input for controlling the light element's width
 	 * @param {HTMLRangeElement} lightSpeedRange Range input for controlling the speed of the light element
 	 * @param {HTMLButtonElement} startButton     Button for toggling the light's movement on and off
-	 * @param {HTMLElement} linkDisplay     An element to display the current session URL into
 	 */
 	function TherapistLightbarController(
 		lightbar,
 		lightWidthRange,
 		lightSpeedRange,
-		startButton,
-		linkDisplay,
+		startButton
 	) {
 		this.minSpeed = 3000;
 		this.maxSpeed = 100;
@@ -20,7 +18,6 @@
 		this.lightWidthRange = lightWidthRange;
 		this.lightSpeedRange = lightSpeedRange;
 		this.startButton = startButton;
-		this.linkDisplay = linkDisplay;
 
 		this.lightWidthRange.onchange = this.handleLightWidthChange.bind(this);
 		this.lightSpeedRange.onchange = this.handleLightSpeedChange.bind(this);

@@ -39,13 +39,8 @@
 	}
 
 	Lightbar.prototype.render = function() {
-		this.lightbarElement = document.createElement('div');
-		this.lightbarElement.id = 'lightbar';
-		this.lightElement = document.createElement('div');
-		this.lightElement.id = 'light';
-
-		this.lightbarElement.appendChild(this.lightElement);
-		this.rootElement.appendChild(this.lightbarElement);
+		this.lightbarElement = document.getElementById('lightbar');
+		this.lightElement = document.getElementById('light');
 	};
 
 	Lightbar.prototype.toJSON = function() {
