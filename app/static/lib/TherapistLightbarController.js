@@ -8,28 +8,29 @@
 	 */
 	function TherapistLightbarController(
 		lightbar,
+		visible,
+		socket,
 		lightWidthRange,
 		lightSpeedRange,
-		startButton
+		startButton,
+		rootElement
 	) {
 		this.minSpeed = 3000;
 		this.maxSpeed = 100;
 		this.lightbar = lightbar;
+		this.socket = socket;
 		this.lightWidthRange = lightWidthRange;
 		this.lightSpeedRange = lightSpeedRange;
 		this.startButton = startButton;
+		this.rootElement = rootElement;
 
 		this.lightWidthRange.onchange = this.handleLightWidthChange.bind(this);
 		this.lightSpeedRange.onchange = this.handleLightSpeedChange.bind(this);
 		this.startButton.onclick = this.toggleBounce.bind(this);
 
-		this.initSocket();
 		this.initSpeedAndWidth();
+		this.setVisible(visible);
 	}
-
-	TherapistLightbarController.prototype.initSocket = function() {
-		this.socket = io();
-	};
 
 	TherapistLightbarController.prototype.initSpeedAndWidth = function() {
 		this._updateLightWidth();
@@ -76,6 +77,16 @@
 
 		this.emitNewSettings();
 	};
+
+
+    TherapistLightbarController.prototype.setVisible = function(visible) {
+        this.visible = visible;
+        if (visible) {
+            this.rootElement.style.display = 'flex';
+        } else {
+            this.rootElement.style.display = 'none';
+        }
+    };
 
 	window.TherapistLightbarController = TherapistLightbarController;
 })();
