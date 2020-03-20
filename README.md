@@ -32,13 +32,7 @@ Start the light's movement as a therapist by clicking the "Start" button. If you
 2.  The therapist is able to control the width of the lightbar itself
 3.  Make the site prettier in general
 4.  Save and load settings out of local storage so the therapist can persist settings across sessions
-
-### Future ideas
-
-*   Add a sound option so that therapists are able to offer audio-based bi-lateral stimulation
-    *   Pitch controls
-    *   Visual representation of left and right speaker to give feedback to therapist that it's working
-    *   What do we show on the patients screen?
+5.  Allow patient to control audio volume and pitch? And speed?
 
 ## Technology used
 
@@ -71,4 +65,5 @@ To run locally:
 *   [ ] Prevent session URL collisions
 *   [ ] Have the patient ping for updated lightbar settings on pageload
 *   [ ] Mobile view
-*   [ ] Add ability to show/hide the help text on the therapist view
+*   [ ] Audio pitch
+*   [ ] Toggle between audio and light
