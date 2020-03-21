@@ -18,3 +18,9 @@
 .controls > label > input {
     margin-left: 1em;
 }
+
+.pitch-button {
+    width: 3em;
+    height: 5em;
+    padding: 0;
+}

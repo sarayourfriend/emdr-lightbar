@@ -1,10 +1,22 @@
 (function() {
-    // use 1 and 99 instead of 0 and 100 so that
-    // neither side of the stereo ever actually
-    // turns off and we prevent popping from
-    // happening when we pan
-    const LEFT_SIDE = 1;
-    const RIGHT_SIDE = 99;
+    // @todo fix popping while panning
+    const LEFT_SIDE = -0.5;
+    const RIGHT_SIDE = 0.5;
+
+    // in Hz
+    const PITCHES = {
+        F3: 172.630,
+        G3: 193.770,
+        A3: 217.500,
+        B3: 244.135,
+        C4: 258.653,
+        D4: 290.328,
+        E4: 325.882,
+        F4: 345.260,
+        G4: 387.541,
+        A4: 435.000, // :-)
+        B4: 488.271
+    };
 
     function Audiobar(rootElement, visible, initialData) {
         this.rootElement = rootElement;
@@ -12,7 +24,7 @@
         this.data = Object.assign({
             isStarted: false,
             speed: 1000,
-            pitch: 1000,
+            pitch: PITCHES.D4,
         }, initialData);
 
         this.initAudio();
@@ -28,6 +40,22 @@
 
     Audiobar.prototype.initAudio = function() {
         this.audioContext = new AudioContext();
+    };
+
+    Audiobar.prototype.getPitches = function() {
+        return PITCHES;
+    };
+
+    Audiobar.prototype.setPitch = function(toPitchByName) {
+        this.data.pitch = PITCHES[toPitchByName];
+
+        if (this.interval) {
+            this.oscillator.frequency.setTargetAtTime(
+                this.data.pitch,
+                this.audioContext.currentTime,
+                0.02
+            );
+        }
     };
 
     Audiobar.prototype.setSpeed = function(toSpeed) {
@@ -49,7 +77,7 @@
     };
 
     Audiobar.prototype.startSound = function() {
-        this.oscillator = this.audioContext.createOscillator()
+        this.oscillator = this.audioContext.createOscillator();
         this.panner = this.audioContext.createStereoPanner();
         this.gain = this.audioContext.createGain();
         this.oscillator.type = 'sine';
@@ -91,7 +119,11 @@
             return;
         }
 
-        this.panner.pan.setValueAtTime(this._nextSide, this.audioContext.currentTime);
+        console.log('nextSide', this._nextSide);
+        this.panner.pan.linearRampToValueAtTime(
+            this._nextSide,
+            this.audioContext.currentTime + 0.1
+        );
 
         switch (this._nextSide) {
             case LEFT_SIDE:
@@ -101,9 +133,9 @@
                 break;
             default:
             case RIGHT_SIDE:
-                this._nextSide = LEFT_SIDE;
                 this.setIndicator(this.leftIndicator, false);
                 this.setIndicator(this.rightIndicator, true);
+                this._nextSide = LEFT_SIDE;
                 break;
         }
     };

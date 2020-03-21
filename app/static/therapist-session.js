@@ -16,7 +16,7 @@
         ab,
         true,
         socket,
-        document.querySelector('[name="audio-pitch"]'),
+        document.getElementById('audio-pitch-container'),
         document.querySelector('[name="audio-speed"]'),
         document.querySelector('[name="audio-start"]'),
         document.getElementById('audio-controls')

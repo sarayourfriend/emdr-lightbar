@@ -3,7 +3,7 @@
         audiobar,
         visible,
         socket,
-        pitchRange,
+        pitchContainer,
         speedRange,
         startButton,
         rootElement
@@ -12,12 +12,11 @@
         this.minSpeed = 500;
         this.audiobar = audiobar;
         this.socket = socket;
-        this.pitchRange = pitchRange;
+        this.pitchContainer = pitchContainer;
         this.speedRange = speedRange;
         this.startButton = startButton;
         this.rootElement = rootElement;
 
-        this.pitchRange.onchange = this.handlePitchChange.bind(this);
         this.speedRange.onchange = this.handleSpeedChange.bind(this);
         this.startButton.onclick = this.toggleSound.bind(this);
 
@@ -26,28 +25,42 @@
     }
 
     TherapistAudiobarController.prototype.initSpeedAndPitch = function() {
-        this._updatePitch();
+        this._renderPitchButtons();
         this._updateSpeed();
         this.emitNewSettings();
+    };
+
+    TherapistAudiobarController.prototype._renderPitchButtons = function() {
+        const availablePitches = this.audiobar.getPitches();
+        Object.keys(availablePitches).forEach(pitchName => {
+            const pitchButton = document.createElement('button');
+            pitchButton.type = 'button';
+            pitchButton.innerText = pitchName;
+            pitchButton.dataset.pitchName = pitchName;
+            pitchButton.classList.add('pitch-button');
+            pitchButton.onclick = () => this.handlePitchClick(pitchButton);
+            this.pitchContainer.appendChild(pitchButton);
+        });
     };
 
     TherapistAudiobarController.prototype.emitNewSettings = function() {
         this.socket.emit('therapist-new-settings', this.audiobar);
     };
 
-    TherapistAudiobarController.prototype._updatePitch = function() {
-        console.log('updatePitch');
+    TherapistAudiobarController.prototype._updatePitch = function(buttonClicked) {
+        const pitchName = buttonClicked.dataset.pitchName;
+        this.audiobar.setPitch(pitchName);
     };
 
     TherapistAudiobarController.prototype._updateSpeed = function() {
         const value = this.speedRange.value;
-        const percentage = parseInt(value) / 100;
+        const percentage = (100 - parseInt(value)) / 100;
         const newSpeed = ((this.maxSpeed - this.minSpeed) * percentage) + this.minSpeed;
         this.audiobar.setSpeed(newSpeed);
     };
 
-    TherapistAudiobarController.prototype.handlePitchChange = function() {
-        this._updatePitch();
+    TherapistAudiobarController.prototype.handlePitchClick = function(buttonClicked) {
+        this._updatePitch(buttonClicked);
         this.emitNewSettings();
     };
 
