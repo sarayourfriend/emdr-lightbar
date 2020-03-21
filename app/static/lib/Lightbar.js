@@ -21,9 +21,9 @@
 	 * @param {Number} initialData.maxMarginLeft The highest allowed value for margin left of the light element during animation
 	 * @param {String} initialData.lightWidth The initial width of the light element
 	 */
-	function Lightbar(rootElement, visible, initialData) {
+	function Lightbar(rootElement, initialData) {
 		this.rootElement = rootElement;
-		this.render(visible);
+		this.render();
 		this.data = Object.assign({
 			isStarted: false,
 			speed: 1000,
@@ -38,10 +38,9 @@
 		this._doBounce = this._doBounce.bind(this);
 	}
 
-	Lightbar.prototype.render = function(visible) {
+	Lightbar.prototype.render = function() {
 		this.lightbarElement = document.getElementById('lightbar');
 		this.lightElement = document.getElementById('light');
-		this.setVisible(visible);
 	};
 
 	Lightbar.prototype.toJSON = function() {
@@ -108,8 +107,10 @@
 	};
 
 	Lightbar.prototype.stopBounce = function() {
-		this.data.isStarted = false;
-	}
+		if (this.data) {
+			this.data.isStarted = false;
+		}
+	};
 
 	/**
 	 * Animates the movement of the light across the lightbar and back.
@@ -228,6 +229,7 @@
         if (visible) {
             this.rootElement.style.display = 'flex';
         } else {
+            this.stopBounce();
             this.rootElement.style.display = 'none';
         }
     };

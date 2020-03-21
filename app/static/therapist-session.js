@@ -1,7 +1,7 @@
 (function() {
     const socket = io();
 	const lb = new Lightbar(document.getElementById('light-container'), false);
-	new TherapistLightbarController(
+	const lbc = new TherapistLightbarController(
 		lb,
         false,
         socket,
@@ -12,7 +12,7 @@
 	);
 
     const ab = new Audiobar(document.getElementById('audio-container'), true);
-    new TherapistAudiobarController(
+    const abc = new TherapistAudiobarController(
         ab,
         true,
         socket,
@@ -21,6 +21,8 @@
         document.querySelector('[name="audio-start"]'),
         document.getElementById('audio-controls')
     );
+
+    new TherapistMethodController(lbc, abc);
 
     window.helpController = new HelpController(
         document.getElementById('help'),

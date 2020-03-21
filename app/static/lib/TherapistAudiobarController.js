@@ -71,6 +71,7 @@
 
     TherapistAudiobarController.prototype.toggleSound = function() {
         const isSounding = this.audiobar.toggleSound();
+        this.emitNewSettings();
         if (isSounding) {
             this.startButton.innerText = 'Stop';
         } else {
@@ -82,9 +83,11 @@
         this.visible = visible;
         if (visible) {
             this.rootElement.style.display = 'flex';
+            this.startButton.innerText = 'Start';
         } else {
             this.rootElement.style.display = 'none';
         }
+        this.audiobar.setVisible(visible);
     };
 
     window.TherapistAudiobarController = TherapistAudiobarController;

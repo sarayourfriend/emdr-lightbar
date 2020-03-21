@@ -83,9 +83,11 @@
         this.visible = visible;
         if (visible) {
             this.rootElement.style.display = 'flex';
+            this.startButton.innerText = 'Start';
         } else {
             this.rootElement.style.display = 'none';
         }
+        this.lightbar.setVisible(visible);
     };
 
 	window.TherapistLightbarController = TherapistLightbarController;

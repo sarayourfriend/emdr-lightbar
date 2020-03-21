@@ -18,9 +18,9 @@
         B4: 488.271
     };
 
-    function Audiobar(rootElement, visible, initialData) {
+    function Audiobar(rootElement, initialData) {
         this.rootElement = rootElement;
-        this.render(visible);
+        this.render();
         this.data = Object.assign({
             isStarted: false,
             speed: 1000,
@@ -32,10 +32,9 @@
         this.bounceAudio = this.bounceAudio.bind(this);
     }
 
-    Audiobar.prototype.render = function(visible) {
+    Audiobar.prototype.render = function() {
         this.leftIndicator = document.getElementById('left-indicator');
         this.rightIndicator = document.getElementById('right-indicator');
-        this.setVisible(visible);
     };
 
     Audiobar.prototype.initAudio = function() {
@@ -141,6 +140,9 @@
     };
 
     Audiobar.prototype.stopSound = function() {
+        if (!this.interval) {
+            return;
+        }
         // stop the scheduled panning
         window.clearInterval(this.interval);
 
@@ -226,6 +228,7 @@
         if (visible) {
             this.rootElement.style.display = 'flex';
         } else {
+            this.stopSound();
             this.rootElement.style.display = 'none';
         }
     };
