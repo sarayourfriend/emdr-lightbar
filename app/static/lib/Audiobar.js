@@ -1,6 +1,10 @@
 (function() {
-    const LEFT_SIDE = 0;
-    const RIGHT_SIDE = 100;
+    // use 1 and 99 instead of 0 and 100 so that
+    // neither side of the stereo ever actually
+    // turns off and we prevent popping from
+    // happening when we pan
+    const LEFT_SIDE = 1;
+    const RIGHT_SIDE = 99;
 
     function Audiobar(rootElement, visible, initialData) {
         this.rootElement = rootElement;
@@ -29,9 +33,9 @@
     Audiobar.prototype.setSpeed = function(toSpeed) {
         this.data.speed = toSpeed;
         if (this.data.isStarted) {
-            // restart the sound to use the new speed
-            this.stopSound();
-            this.startSound();
+            // restart the interval with the new speed
+            window.clearInterval(this.interval);
+            this.interval = window.setInterval(this.bounceAudio, this.data.speed);
         }
     };
 
@@ -47,8 +51,12 @@
     Audiobar.prototype.startSound = function() {
         this.oscillator = this.audioContext.createOscillator()
         this.panner = this.audioContext.createStereoPanner();
+        this.gain = this.audioContext.createGain();
         this.oscillator.type = 'sine';
-        this.oscillator.connect(this.panner).connect(this.audioContext.destination);
+        this.oscillator
+            .connect(this.panner)
+            .connect(this.gain)
+            .connect(this.audioContext.destination);
 
         // keep the existing side if it's there
         if (this._nextSide === undefined) {
@@ -57,7 +65,13 @@
         // "bounce" it once to initialize it to the left side
         this.bounceAudio();
 
+        // prevent popping on start by starting at a small volume and then ramping it up
+        this.gain.gain.setValueAtTime(0.000001, this.audioContext.currentTime);
         this.oscillator.start();
+        this.gain.gain.linearRampToValueAtTime(
+            0.9,
+            this.audioContext.currentTime + 0.5
+        );
 
         this.interval = window.setInterval(this.bounceAudio, this.data.speed);
     };
@@ -73,6 +87,10 @@
     };
 
     Audiobar.prototype.bounceAudio = function() {
+        if (!this.data.isStarted) {
+            return;
+        }
+
         this.panner.pan.setValueAtTime(this._nextSide, this.audioContext.currentTime);
 
         switch (this._nextSide) {
@@ -91,8 +109,71 @@
     };
 
     Audiobar.prototype.stopSound = function() {
-        this.oscillator.stop();
+        // stop the scheduled panning
         window.clearInterval(this.interval);
+
+        // in the event that someone quickly clicks start and stop,
+        // this will prevent the "stopping" routine's schedule
+        // from being interrupted by the starting routine's schedule
+        // which takes considerably longer
+        //
+        // starting takes 0.5 seconds and stopping takes 0.3; so if
+        // you start and then stop within those first 0.2 seconds,
+        // you'll end up with conflicting values being schedule
+        // on the gain and get very strange effects
+        //
+        // We cannot prevent popping in this case, but at least
+        // we can prevent some jostling around
+        this.gain.gain.cancelScheduledValues(this.audioContext.currentTime);
+
+        // while a single linear ramp is sufficient to
+        // prevent the popping when the sound is starting
+        // two are necessary while stopping the sound
+        //
+        // I really don't know why this is (some kind of
+        // science about the human ear + how speakers are
+        // built)
+        //
+        // I'll note that with only one linear ramp it
+        // sounded fine with headphones but the pop
+        // was consistent with laptop speakers; it may
+        // be overkill to fix this because the audio panning
+        // feature is only useful when you can isolate
+        // both speakers per ear (i.e., when you have
+        // headphones, basically) buuuut because I
+        // can't predict what kinds of heaphones people
+        // have, it seems like it's safest to just fix it
+        // as much as possible.
+        //
+        // In any case, now it sounds great on my nice sony
+        // headphones, and on less-than-nice macbook pro speakers
+        //
+        // I can't find my apple earbuds to test with
+        // at the moment, but I can revisit this once I'm
+        // able to test with more common headphone
+        // situations
+        //
+        // The way it's done here will take 0.11 seconds to fully
+        // stop, but really by 0.08 (this number is a guess) seconds,
+        // the sound will be imperceptible. So even though it
+        // will technically take 0.11 seconds to fully stop,
+        // the user shouldn't notice anything about it other than
+        // a gentle and soft stop to the tone :)
+        this.gain.gain.linearRampToValueAtTime(
+            // I'm completely stumped as to why it is necessary to
+            // ramp first to the current gain, but if you adjust this
+            // even by 0.1 it will cause a popping noise to happen
+            // at the start of the gain wind-down
+            0.9,
+            this.audioContext.currentTime + 0.01
+        );
+        this.gain.gain.linearRampToValueAtTime(
+            0.0001,
+            this.audioContext.currentTime + 0.1
+        );
+
+        this.oscillator.stop(this.audioContext.currentTime + 0.11);
+
         this.interval = null;
     };
 
