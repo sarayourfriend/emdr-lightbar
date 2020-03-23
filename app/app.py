@@ -4,7 +4,7 @@ monkey.patch_all()
 import os
 
 import dotenv
-from flask import Flask, escape, request, send_from_directory, session, render_template, url_for
+from flask import Flask, escape, request, redirect, send_from_directory, session, render_template, url_for
 from flask_socketio import SocketIO, send, emit
 
 from utils import new_session_id
@@ -38,6 +38,10 @@ def send_static(path):
 
 @app.route('/')
 def index():
+    if 's' in request.args:
+        return redirect(
+            url_for('patient_session', session_id=request.args['s']))
+
     return render_template('index/index.html')
 
 
