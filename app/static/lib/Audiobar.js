@@ -68,11 +68,20 @@
 
     Audiobar.prototype.toJSON = function() {
         return {
-            type:' audiobar',
+            type: 'audiobar',
             isStarted: this.data.isStarted,
             speed: this.data.speed,
             pitch: this.data.pitch
         };
+    };
+
+    Audiobar.prototype.updateSettings = function(newSettings) {
+        this.setSpeed(newSettings.speed);
+        this.setPitch(newSettings.pitch);
+
+        if (newSettings.isStarted !== this.data.isStarted) {
+            this.toggleSound();
+        }
     };
 
     Audiobar.prototype.startSound = function() {
