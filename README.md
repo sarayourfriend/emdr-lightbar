@@ -31,8 +31,7 @@ Start the light's movement as a therapist by clicking the "Start" button. If you
     *   We should be able to implement a dark-mode setting in the future to accomodate OS/browser level dark-mode settings
 2.  The therapist is able to control the width of the lightbar itself
 3.  Make the site prettier in general
-4.  Save and load settings out of local storage so the therapist can persist settings across sessions
-5.  Allow patient to control audio volume and pitch? And speed?
+4.  Allow patient to control audio volume and pitch? And speed?
 
 ## Technology used
 
@@ -63,7 +62,4 @@ To run locally:
 
 *   [ ] Minify/mangle JS and CSS and run through babel so we can use fully modern JS
 *   [ ] Prevent session URL collisions
-*   [ ] Have the patient ping for updated lightbar settings on pageload
-*   [ ] Mobile view
-*   [ ] Audio pitch
-*   [ ] Toggle between audio and light
+*   [ ] Mobile view (especially of the audio indicators)
