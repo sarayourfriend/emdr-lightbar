@@ -27,7 +27,6 @@
     TherapistAudiobarController.prototype.initSpeedAndPitch = function() {
         this._renderPitchButtons();
         this._updateSpeed();
-        this.emitNewSettings();
     };
 
     TherapistAudiobarController.prototype._renderPitchButtons = function() {
@@ -45,6 +44,13 @@
 
     TherapistAudiobarController.prototype.emitNewSettings = function() {
         this.socket.emit('therapist-new-settings', this.audiobar);
+    };
+
+    TherapistAudiobarController.prototype.handleInitialSettings = function(initialSettings) {
+        this.audiobar.updateSettings(initialSettings);
+        if (initialSettings.isStarted) {
+            this.startButton.innerText = 'Stop';
+        }
     };
 
     TherapistAudiobarController.prototype._updatePitch = function(buttonClicked) {

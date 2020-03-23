@@ -1,0 +1,5 @@
+{% if initial_settings %}
+<script>
+    window.initialSettings = {{ initial_settings | safe }};
+</script>
+{% endif %}

@@ -127,7 +127,6 @@
             return;
         }
 
-        console.log('nextSide', this._nextSide);
         this.panner.pan.linearRampToValueAtTime(
             this._nextSide,
             this.audioContext.currentTime + 0.1

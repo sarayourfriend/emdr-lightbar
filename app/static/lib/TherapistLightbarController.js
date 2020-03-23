@@ -35,12 +35,18 @@
 	TherapistLightbarController.prototype.initSpeedAndWidth = function() {
 		this._updateLightWidth();
 		this._updateLightSpeed();
-		this.emitNewSettings();
 	};
 
 	TherapistLightbarController.prototype.emitNewSettings = function() {
 		// The Lightbar class manages its own serialization in Lightbar.prototype.toJSON
 		this.socket.emit('therapist-new-settings', this.lightbar);
+	};
+
+	TherapistLightbarController.prototype.handleInitialSettings = function(initialSettings) {
+		this.lightbar.updateSettings(initialSettings);
+		if (initialSettings.isStarted) {
+			this.startButton.innerText = 'Stop';
+		}
 	};
 
 	TherapistLightbarController.prototype._updateLightWidth = function() {

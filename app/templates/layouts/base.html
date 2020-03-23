@@ -7,6 +7,8 @@
 </head>
 <body>
     {% block content %}{% endblock %}
-    {% block scripts %}{% endblock %}
+    {% block scripts %}
+        {% include "shared/_initial-settings.js.html" %}
+    {% endblock %}
 </body>
 </html>

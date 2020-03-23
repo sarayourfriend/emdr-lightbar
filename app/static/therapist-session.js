@@ -22,7 +22,7 @@
         document.getElementById('audio-controls')
     );
 
-    new TherapistMethodController(lbc, abc);
+    new TherapistMethodController(lbc, abc, window.initialSettings);
 
     window.helpController = new HelpController(
         document.getElementById('help'),

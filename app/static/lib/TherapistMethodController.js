@@ -3,43 +3,49 @@
     function TherapistMethodController(
         lightbarController,
         audiobarController,
+        initialSettings
     ) {
         this.lightbarController = lightbarController;
         this.audiobarController = audiobarController;
-        this.currentMethod = null;
 
         this.methodChoices = document.querySelectorAll('[name="method-choice"]');
         this.methodChoices.forEach(methodChoice => {
-            if (methodChoice.checked) {
-                this.setMethod(methodChoice.value);
-            }
+            methodChoice.checked = methodChoice.value === initialSettings.type;
             methodChoice.onchange = this.handleMethodChange.bind(this);
         });
-
-        if (!this.currentMethod) {
-            this.setMethod(DEFAULT_METHOD);
-        }
+        this.handleInitialSettings(initialSettings);
     }
 
-    TherapistMethodController.prototype.setMethod = function(method) {
-        this.currentMethod = method;
-        switch (method) {
-            case 'light':
+    TherapistMethodController.prototype.handleInitialSettings = function(initialSettings) {
+        switch (initialSettings.type) {
+            case 'lightbar':
+                this.lightbarController.setVisible(true);
+                this.lightbarController.handleInitialSettings(initialSettings);
+                this.audiobarController.setVisible(false);
+                break;
+            case 'audiobar':
+                this.lightbarController.setVisible(false);
+                this.audiobarController.setVisible(true);
+                this.audiobarController.handleInitialSettings(initialSettings);
+                break;
+        }
+    };
+
+    TherapistMethodController.prototype.handleMethodChange = function(e) {
+        const methodChoice = e.target;
+
+        switch (methodChoice.value) {
+            case 'lightbar':
                 this.audiobarController.setVisible(false);
                 this.lightbarController.setVisible(true);
                 this.lightbarController.emitNewSettings();
                 break;
             default:
-            case 'audio':
+            case 'audiobar':
                 this.lightbarController.setVisible(false);
                 this.audiobarController.setVisible(true);
                 this.audiobarController.emitNewSettings();
         }
-    }
-
-    TherapistMethodController.prototype.handleMethodChange = function(e) {
-        const methodChoice = e.target;
-        this.setMethod(methodChoice.value)
     };
 
     window.TherapistMethodController = TherapistMethodController;
