@@ -7,7 +7,7 @@
 	 * the internal state as well as the DOM.
 	 *
 	 * This object is used to control both the therapist's and
-	 * the client's lightbars, so it should not include
+	 * the patient's lightbars, so it should not include
 	 * anything specific to the controls for configuring the
 	 * appearance or behavior of the lightbar. That stuff
 	 * should live in TherapistLightbarController.
@@ -56,7 +56,7 @@
 	 * Handles updates to the lightbar's appearance and
 	 * behavior. Used to send new settings after a therapist
 	 * updates it on their end and the new settings event
-	 * is captured on the client's browser.
+	 * is captured on the patient's browser.
 	 * @param  {Object} newSettings The new settings to apply to the lightbar
 	 * @param {Number} newSettings.speed The new speed of the lightbar
 	 * @param {String} newSettings.lightWidth The new width of the light element

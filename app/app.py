@@ -67,7 +67,8 @@ def therapist_session():
 
     return render_template(
         'therapist/session.html',
-        session_url=session_url)
+        session_url=session_url,
+        session_id=session['session_id'])
 
 
 @app.route('/s/<session_id>/')

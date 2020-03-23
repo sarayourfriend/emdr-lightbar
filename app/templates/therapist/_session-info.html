@@ -1,13 +1,21 @@
 <div id="session-info" class="copy controls">
     <p>
-        Session URL to share with your client:
+        Session URL to share with your patient:
         <a href="{{ session_url }}" id="link-display">{{ session_url }}</a>
     </p>
 
+    <p>
+        You may also share with them the following code to enter on the homepage:
+        <pre><code>{{ session_id }}</code></pre>
+    </p>
+
     <form method="POST">
-        <button type="submit">Create new session URL</button>
+        <button type="submit">Click here to generate a new session</button>
     </form>
 
+    <p>
+        Toggle between the audio and light options below to select the session type.
+    </p>
     <div id="method-choices">
         <label>
             <input type="radio" name="method-choice" value="audio" />
@@ -15,7 +23,7 @@
         </label>
 
         <label>
-            <input type="radio" name="method-choice" value="light" />
+            <input type="radio" name="method-choice" value="light" checked="true" />
             Light
         </label>
     </div>
