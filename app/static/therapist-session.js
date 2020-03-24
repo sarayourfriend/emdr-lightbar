@@ -23,9 +23,4 @@
     );
 
     new TherapistMethodController(lbc, abc, window.initialSettings);
-
-    window.helpController = new HelpController(
-        document.getElementById('help'),
-        true
-    );
 })();

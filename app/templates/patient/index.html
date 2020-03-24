@@ -1,0 +1,20 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Patient: Get Started{% endblock %}
+
+{% block content %}
+    <div class="copy controls">
+        <h1>EMDR Lightbar</h1>
+        <h2>Patient: Get Started</h2>
+        <p>
+            Enter the session ID provided by your therapist below, then click "Join session" to connect to the virtual EMDR Lightbar.
+        </p>
+        <form>
+            <label>
+                Session ID:
+                <input type="text" name="s" />
+            </label>
+            <button>Join session</button>
+        </form>
+    </div>
+{% endblock %}

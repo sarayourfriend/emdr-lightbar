@@ -6,7 +6,14 @@
 {% endblock %}
 
 {% block content %}
-    {% include "therapist/_help.html" %}
+    <div class="copy">
+        <h1>EMDR Lightbar</h1>
+        <h2>Therapist: Get Started</h2>
+
+        <p>
+            Unsure how to start? <a href="/therapist/help/" target="_blank">Click here to get help</a>.
+        </p>
+    </div>
     {% include "therapist/_session-info.html" %}
     {% include "therapist/_light-controls.html" %}
     {% include "therapist/_audio-controls.html" %}
@@ -22,6 +29,5 @@
     <script src="/static/lib/TherapistLightbarController.js"></script>
     <script src="/static/lib/TherapistAudiobarController.js"></script>
     <script src="/static/lib/TherapistMethodController.js"></script>
-    <script src="/static/lib/HelpController.js"></script>
     <script src="/static/therapist-session.js"></script>
 {% endblock %}

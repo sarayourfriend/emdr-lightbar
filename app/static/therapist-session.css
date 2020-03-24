@@ -5,8 +5,20 @@
     flex-direction: column;
 }
 
+.grouped {
+    flex-direction: row;
+}
+
 .controls > * {
     margin-bottom: 1em;
+}
+
+.controls.grouped > * {
+    margin: 0;
+}
+
+.controls.grouped > label {
+    display: block;
 }
 
 .controls > label {
@@ -23,4 +35,13 @@
     width: 3em;
     height: 5em;
     padding: 0;
+}
+
+.break {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+input.session-id {
+    width: 6em;
 }

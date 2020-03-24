@@ -1,22 +1,18 @@
-<div id="session-info" class="copy controls">
+<div id="session-info" class="copy">
     <p>
-        Session URL to share with your patient:
-        <a href="{{ session_url }}" id="link-display">{{ session_url }}</a>
-    </p>
-
-    <p>
-        You may also share with them the following code to enter on the homepage:
-        <pre><code>{{ session_id }}</code></pre>
+        Session ID to share with your patient:
+        <input class="session-id" type="text" value="{{ session_id }}" onkeydown="event.preventDefault()"/>
+        <button type="button" onclick="navigator.clipboard.writeText('{{ session_url }}')">Copy</button>
     </p>
 
     <form method="POST">
-        <button type="submit">Click here to generate a new session</button>
+        <button type="submit">Refresh session ID</button>
     </form>
 
-    <p>
-        Toggle between the audio and light options below to select the session type.
-    </p>
-    <div id="method-choices">
+    <hr class="break"/>
+
+    <div id="method-choices" class="controls grouped">
+        Session type:
         <label>
             <input type="radio" name="method-choice" value="audiobar" />
             Audio

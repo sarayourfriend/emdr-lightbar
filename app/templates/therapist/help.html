@@ -1,7 +1,13 @@
-<div class="copy">
-    <h1>EMDR Lightbar</h1>
-    <button type="button" name="toggle-help" onclick="helpController.toggle(this)">Hide help</button>
-    <div id="help">
+{% extends "layouts/base.html" %}
+
+{% block title %}
+    Therapist Help
+{% endblock %}
+
+{% block content %}
+    <div class="copy">
+        <h1>EMDR Lightbar</h1>
+        <h2>Therapist Help</h2>
         <p>
             Toggling start and stop will automatically start and stop the lightbar's
             movement on your patient's screen. Likewise, changes to the speed and width
@@ -22,5 +28,8 @@
             session URL. Remember, they're free, and you can generate as many as you'd like,
             so just be sure to share the one you're currently in control of with your patient.
         </p>
+        <p>
+            If you still need help, please email <a href="mailto:emdr_lightbar@fastmail.com">emdr_lightbar (at) fastmail.com</a> for assistance
+        </p>
     </div>
-</div>
+{% endblock %}

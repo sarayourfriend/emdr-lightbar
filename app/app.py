@@ -51,14 +51,13 @@ def send_static(path):
 
 @app.route('/')
 def index():
-    if 's' in request.args:
-        return redirect(
-            url_for('patient_session', session_id=request.args['s']))
+    return render_template(
+        'index/index.html',
+        new_therapist_session=url_for('therapist_session'),
+        new_patient_session=url_for('new_patient_session'))
 
-    return render_template('index/index.html')
 
-
-@app.route('/s/', methods=['GET', 'POST'])
+@app.route('/therapist/', methods=['GET', 'POST'])
 def therapist_session():
     """
     Creates a new session for a therapist if one does not already exist.
@@ -98,7 +97,21 @@ def therapist_session():
         initial_settings=initial_settings)
 
 
-@app.route('/s/<session_id>/')
+@app.route('/therapist/help/')
+def therapist_help():
+    return render_template('therapist/help.html')
+
+
+@app.route('/session/')
+def new_patient_session():
+    if 's' in request.args:
+        return redirect(
+            url_for('patient_session', session_id=request.args['s']))
+
+    return render_template('patient/index.html')
+
+
+@app.route('/session/<session_id>/')
 def patient_session(session_id):
     existing_settings = redis.get(session_id)
 
