@@ -15,7 +15,7 @@ dotenv.load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
-redis = Redis.from_url(os.getenv('REDIS_URL'))
+redis = Redis.from_url(os.getenv('REDIS_URL'), decode_responses=True)
 
 socketio_kwargs = {
     'async_mode': 'threading',
@@ -39,6 +39,9 @@ DEFAULT_SESSION_SETTINGS = {
     'speed': 1000,
     'lightWidth': '2%',
 }
+
+
+DEFAULT_SESSION_SETTINGS_SERIALIZED = json.dumps(DEFAULT_SESSION_SETTINGS)
 
 
 @app.route('/static/<path:path>')
@@ -67,22 +70,21 @@ def therapist_session():
         or request.method == 'POST'
     )
 
+    initial_settings = None
     if should_create_new_session:
-        print('should_create_new_session=True')
         if 'session_id' in session:
             # clear the existing session settings
             redis.delete(session['session_id'])
 
         session_id = new_session_id()
         session['session_id'] = session_id
-        initial_settings = json.dumps(DEFAULT_SESSION_SETTINGS)
-        redis.set(session_id, initial_settings)
     else:
-        print('should_create_new_session=False')
         session_id = session['session_id']
-        initial_settings = redis.get(session_id).decode('utf-8')
+        initial_settings = redis.get(session_id)
 
-    print(initial_settings)
+    if initial_settings is None:
+        initial_settings = DEFAULT_SESSION_SETTINGS_SERIALIZED
+        redis.set(session_id, initial_settings)
 
     session_url = url_for(
         'patient_session',
@@ -105,7 +107,7 @@ def patient_session(session_id):
 
     return render_template(
         'patient/session.html',
-        initial_settings=existing_settings.decode('utf-8'))
+        initial_settings=existing_settings)
 
 
 @app.errorhandler(404)
