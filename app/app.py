@@ -15,7 +15,7 @@ dotenv.load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
-redis = Redis(host=os.getenv('REDIS_URL'), port=6379, db=0)
+redis = Redis.from_url(os.getenv('REDIS_URL'))
 
 socketio_kwargs = {
     'async_mode': 'threading',
