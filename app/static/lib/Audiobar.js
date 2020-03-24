@@ -18,6 +18,8 @@
         B4: 488.271
     };
 
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+
     function Audiobar(rootElement, initialData) {
         this.rootElement = rootElement;
         this.render();
