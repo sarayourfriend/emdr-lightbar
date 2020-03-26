@@ -5,7 +5,7 @@ import os
 import json
 
 import dotenv
-from flask import Flask, escape, request, redirect, send_from_directory, session, render_template, url_for
+from flask import Flask, escape, request, redirect, send_from_directory, session, render_template, url_for, abort
 from flask_socketio import SocketIO, send, emit
 from redis import Redis
 
@@ -113,10 +113,22 @@ def new_client_session():
 
 @app.route('/session/<session_id>/')
 def client_session(session_id):
+    session_id_needs_help = (
+        not session_id.isupper()
+        or '-' not in session_id
+        or len(session_id) != 7    
+    )
+    if session_id_needs_help:
+        session_id = session_id.upper().replace(' ', '-')
+        if len(session_id) != 7:
+            session_id = f'{session_id[:3]}-{session_id[3:]}'
+
+        return redirect(url_for('client_session', session_id=session_id))
+
     existing_settings = redis.get(session_id)
 
     if existing_settings is None:
-        return redirect(url_for('page_not_found'))
+        return abort(404)
 
     return render_template(
         'client/session.html',
