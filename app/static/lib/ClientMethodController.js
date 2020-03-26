@@ -1,5 +1,5 @@
 (function() {
-    function PatientMethodController(
+    function ClientMethodController(
         lightbarController,
         audiobarController,
         initialSettings
@@ -8,11 +8,11 @@
         this.audiobarController = audiobarController;
 
         const socket = io(window.location.href);
-        socket.on('patient-new-settings', this.handleNewSettings.bind(this));
+        socket.on('client-new-settings', this.handleNewSettings.bind(this));
         this.handleNewSettings(initialSettings);
     }
 
-    PatientMethodController.prototype.handleNewSettings = function(newSettings) {
+    ClientMethodController.prototype.handleNewSettings = function(newSettings) {
         switch (newSettings.type) {
             case 'lightbar':
                 this.lightbarController.setVisible(true);
@@ -27,5 +27,5 @@
         }
     };
 
-    window.PatientMethodController = PatientMethodController;
+    window.ClientMethodController = ClientMethodController;
 })();

@@ -54,7 +54,7 @@ def index():
     return render_template(
         'index/index.html',
         new_therapist_session=url_for('therapist_session'),
-        new_patient_session=url_for('new_patient_session'))
+        new_client_session=url_for('new_client_session'))
 
 
 @app.route('/therapist/', methods=['GET', 'POST'])
@@ -86,7 +86,7 @@ def therapist_session():
         redis.set(session_id, initial_settings)
 
     session_url = url_for(
-        'patient_session',
+        'client_session',
         session_id=session_id,
         _external=True)
 
@@ -103,23 +103,23 @@ def therapist_help():
 
 
 @app.route('/session/')
-def new_patient_session():
+def new_client_session():
     if 's' in request.args:
         return redirect(
-            url_for('patient_session', session_id=request.args['s']))
+            url_for('client_session', session_id=request.args['s']))
 
-    return render_template('patient/index.html')
+    return render_template('client/index.html')
 
 
 @app.route('/session/<session_id>/')
-def patient_session(session_id):
+def client_session(session_id):
     existing_settings = redis.get(session_id)
 
     if existing_settings is None:
         return redirect(url_for('page_not_found'))
 
     return render_template(
-        'patient/session.html',
+        'client/session.html',
         initial_settings=existing_settings)
 
 
@@ -133,7 +133,7 @@ def handle_new_settings(new_settings):
     session_id = session['session_id']
     namespace = f'/session/{session_id}/'
     redis.set(session_id, json.dumps(new_settings))
-    emit('patient-new-settings', new_settings, namespace=namespace, broadcast=True)
+    emit('client-new-settings', new_settings, namespace=namespace, broadcast=True)
 
 
 if __name__ == '__main__':

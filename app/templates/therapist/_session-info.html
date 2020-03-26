@@ -1,6 +1,6 @@
 <div id="session-info" class="copy">
     <p>
-        Session ID to share with your patient:
+        Session ID to share with your client:
         <input class="session-id" type="text" value="{{ session_id }}" onkeydown="event.preventDefault()"/>
         <button type="button" onclick="navigator.clipboard.writeText('{{ session_url }}')">Copy</button>
     </p>

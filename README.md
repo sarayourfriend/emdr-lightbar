@@ -1,6 +1,6 @@
 # EMDR Lightbar
 
-A simple EMDR lightbar app for therapists to be able to do EMDR therapy with remote patients.
+A simple EMDR lightbar app for therapists to be able to do EMDR therapy with remote clients.
 
 This was inspired by my own therapist's remarks during our first therapy session at the start of the 2020 Coronavirus lockdown in the US and my own desire to be able to continue EMDR therapy during the quarantine.
 
@@ -10,19 +10,19 @@ This was inspired by my own therapist's remarks during our first therapy session
 
 ## What's the problem with video chat?
 
-No matter how good a video chat is, almost all of them have some degree of latency, and many patients may have low-bandwidth connections, making lag on video chats pretty distracting for finger or remote-lightbar EMDR. Even when there isn't lag, most webcams introduce some amount of blurring with rapid movement, which EMDR obviously requires. This can also be distracting to the patient, making it difficult to focus on the already hard work of trauma therapy.
+No matter how good a video chat is, almost all of them have some degree of latency, and many clients may have low-bandwidth connections, making lag on video chats pretty distracting for finger or remote-lightbar EMDR. Even when there isn't lag, most webcams introduce some amount of blurring with rapid movement, which EMDR obviously requires. This can also be distracting to the client, making it difficult to focus on the already hard work of trauma therapy.
 
 ## How does this solve that problem?
 
-This app solves the problem by allowing a therapist to share a short link with a patient that opens a lightbar in the patient's web browser. For example, the therapist may generate a link for a patient's session that looks something like: `www.example.com/s/ABC-123`. These content of these links can only be controlled from the therapists session. On the patient side, all that is visible is the configured lightbar. We store neither the therapists nor the patient's name and the configuration of the lightbar is not PPI. Because no PPI is stored in any way, there is no risk of the link being brute forced or anything like that, as the only information that could ever be revealed is lightbar's configuration, which again is not PPI. The only information that is stored is a small cookie on the therapists session to identify their browser as the owner of the generated link (which will show them the controls on the page).
+This app solves the problem by allowing a therapist to share a short link with a client that opens a lightbar in the client's web browser. For example, the therapist may generate a link for a client's session that looks something like: `www.example.com/s/ABC-123`. These content of these links can only be controlled from the therapists session. On the client side, all that is visible is the configured lightbar. We store neither the therapists nor the client's name and the configuration of the lightbar is not PPI. Because no PPI is stored in any way, there is no risk of the link being brute forced or anything like that, as the only information that could ever be revealed is lightbar's configuration, which again is not PPI. The only information that is stored is a small cookie on the therapists session to identify their browser as the owner of the generated link (which will show them the controls on the page).
 
 ## What currently works?
 
-You can create a session as a therapist and connect as a patient. Once you have access to the app, follow the instructions on the index page to set up a therapist and patient session.
+You can create a session as a therapist and connect as a client. Once you have access to the app, follow the instructions on the index page to set up a therapist and client session.
 
-Start the light's movement as a therapist by clicking the "Start" button. If you open the session URL in a private tab, and change the settings in the therapist tab, you should see them immediately reflected in the patient tab.
+Start the light's movement as a therapist by clicking the "Start" button. If you open the session URL in a private tab, and change the settings in the therapist tab, you should see them immediately reflected in the client tab.
 
-**Note:** Both tabs must be open before the therapist begins modifying the lightbar behavior or else the settings will potentially start out of sync. Changing the settings just one time once both the therapist and the patient are connected will sync the settings. After the first time, they will continue to stay in sync.
+**Note:** Both tabs must be open before the therapist begins modifying the lightbar behavior or else the settings will potentially start out of sync. Changing the settings just one time once both the therapist and the client are connected will sync the settings. After the first time, they will continue to stay in sync.
 
 ## Feature Roadmap
 
@@ -31,7 +31,7 @@ Start the light's movement as a therapist by clicking the "Start" button. If you
     *   We should be able to implement a dark-mode setting in the future to accomodate OS/browser level dark-mode settings
 2.  The therapist is able to control the width of the lightbar itself
 3.  Make the site prettier in general
-4.  Allow patient to control audio volume and pitch? And speed?
+4.  Allow client to control audio volume and pitch? And speed?
 
 ## Technology used
 

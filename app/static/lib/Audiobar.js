@@ -18,7 +18,7 @@
         B4: 488.271
     };
 
-    const IS_SAFARI = true//!window.AudioContext && window.webkitAudioContext;
+    const IS_SAFARI = !window.AudioContext && window.webkitAudioContext;
     const AudioContext = window.AudioContext || window.webkitAudioContext;
 
     function Audiobar(rootElement, initialData) {
