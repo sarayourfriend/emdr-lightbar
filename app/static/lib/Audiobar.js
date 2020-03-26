@@ -18,6 +18,7 @@
         B4: 488.271
     };
 
+    const IS_SAFARI = true//!window.AudioContext && window.webkitAudioContext;
     const AudioContext = window.AudioContext || window.webkitAudioContext;
 
     function Audiobar(rootElement, initialData) {
@@ -37,6 +38,11 @@
     Audiobar.prototype.render = function() {
         this.leftIndicator = document.getElementById('left-indicator');
         this.rightIndicator = document.getElementById('right-indicator');
+
+        if (IS_SAFARI) {
+            const warning = document.getElementById('safari-unsupported');
+            warning.innerText = 'The audio feature is not currently supported in Safari.';
+        }
     };
 
     Audiobar.prototype.initAudio = function() {
