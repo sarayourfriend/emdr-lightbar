@@ -131,7 +131,7 @@ def page_not_found(e):
 @socketio.on('therapist-new-settings')
 def handle_new_settings(new_settings):
     session_id = session['session_id']
-    namespace = f'/s/{session_id}/'
+    namespace = f'/session/{session_id}/'
     redis.set(session_id, json.dumps(new_settings))
     emit('patient-new-settings', new_settings, namespace=namespace, broadcast=True)
 
