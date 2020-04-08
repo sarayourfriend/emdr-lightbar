@@ -2,7 +2,7 @@
     <p>
         Session ID to share with your client:
         <input class="session-id" type="text" value="{{ session_id }}" onkeydown="event.preventDefault()"/>
-        <button type="button" onclick="navigator.clipboard.writeText('{{ session_url }}')">Copy</button>
+        <button type="button" onclick="Clipboard.copy('{{ session_url }}')">Copy</button>
     </p>
 
     <form method="POST">
