@@ -33,6 +33,7 @@
 			maxMarginLeft: this.getMaxMarginLeft(),
 			// @todo use lightWidth to set the initial width of the light element
 			lightWidth: '2%',
+			isStopping: false,
 		}, initialData);
 
 		this._doBounce = this._doBounce.bind(this);
@@ -48,7 +49,10 @@
 			type: 'lightbar',
 			isStarted: this.data.isStarted,
 			speed: this.data.speed,
-			lightWidth: this.data.lightWidth
+			lightWidth: this.data.lightWidth,
+			isStopping: this.data.isStopping,
+			stoppingBounceCount: this.data.stoppingBounceCount,
+			stoppingSpeed: this.data.stoppingSpeed
 		};
 	};
 
@@ -102,6 +106,7 @@
 
 	Lightbar.prototype.startBounce = function() {
 		this.data.isStarted = true;
+		this.data.isStopping = false;
 
 		window.requestAnimationFrame(this._doBounce);
 	};
@@ -109,8 +114,27 @@
 	Lightbar.prototype.stopBounce = function() {
 		if (this.data) {
 			this.data.isStarted = false;
+			this.data.isStopping = true;
+			this.data.stoppingBounceCount = 0;
+			this.data.stoppingSpeed = this.data.speed;
 		}
 	};
+
+	Lightbar.prototype._isAtMidpoint = function() {
+		const currentMarginLeft = this.lightElement.style.marginLeft;
+		const parsedMarginLeft = currentMarginLeft !== '' ? parseInt(currentMarginLeft) : 0;
+
+		const midpoint = this.data.maxMarginLeft / 2;
+		const tolerance = this.data.maxMarginLeft * 0.02;
+		const lowerTolerance = midpoint - (tolerance / 2);
+		const upperTolerance = midpoint + (tolerance / 2);
+
+		if (parsedMarginLeft > lowerTolerance && parsedMarginLeft < upperTolerance) {
+			// within midpoint
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Animates the movement of the light across the lightbar and back.
@@ -137,7 +161,8 @@
 		this.data.maxMarginLeft = this.getMaxMarginLeft();
 		// this is constant really but makes the code more readable than a random 0 all of the place
 		this.data.minMarginLeft = 0;
-		const pxPerMs = this.data.maxMarginLeft / this.data.speed;
+		const speed = this.data.isStopping ? this.data.stoppingSpeed : this.data.speed;
+		const pxPerMs = this.data.maxMarginLeft / speed;
 
 		const timeDelta = timestamp - this._previous;
 		const pxDelta = timeDelta * pxPerMs;
@@ -159,7 +184,23 @@
 				break;
 		}
 
-		if (this.data.isStarted) {
+		if (this.data.stoppingBounceCount === 2) {
+			// we've bounced twice
+			if (this._isAtMidpoint()) {
+				this.data.isStarted = false;
+				this.data.isStopping = false;
+			}
+		}
+
+		/**
+		 * This doesn't work right now but something here should be done to
+		 * gradually slow down the lightbar as it is stopping
+		 */
+		// if (this.data.isStopping) {
+		// 	this.data.stoppingSpeed = this.data.stoppingSpeed * 0.99;
+		// }
+
+		if (this.data.isStarted || this.data.isStopping) {
 			this._previous = timestamp;
 			window.requestAnimationFrame(this._doBounce)
 		} else {
@@ -171,9 +212,11 @@
 	Lightbar.prototype._handleMoveLeft = function(currentMarginLeft, pxDelta) {
 		const nextMarginLeft = currentMarginLeft - pxDelta;
 
+		let didChangeDirection = false;
 		if (currentMarginLeft === this.data.minMarginLeft) {
 			this.data.movementDirection = 'right';
 			this._handleMoveRight(currentMarginLeft, pxDelta);
+			didChangeDirection = true;
 		} else if (nextMarginLeft < this.data.minMarginLeft) {
 			/**
 			the next required movement would move past the left-most
@@ -191,17 +234,24 @@
 			const inBoundsMarginLeft = Math.abs(nextMarginLeft);
 			this.lightElement.style.marginLeft = inBoundsMarginLeft + 'px';
 			this.data.movementDirection = 'right';
+			didChangeDirection = true;
 		} else {
 			this.lightElement.style.marginLeft = nextMarginLeft + 'px';
+		}
+
+		if (this.data.isStopping && didChangeDirection) {
+			this.data.stoppingBounceCount += 1;
 		}
 	};
 
 	Lightbar.prototype._handleMoveRight = function(currentMarginLeft, pxDelta) {
 		const nextMarginLeft = currentMarginLeft + pxDelta;
 
+		let didChangeDirection = false;
 		if (currentMarginLeft === this.data.maxMarginLeft) {
 			this.data.movementDirection = 'left';
 			this._handleMoveLeft(currentMarginLeft, pxDelta);
+			didChangeDirection = true;
 		} else if (nextMarginLeft > this.data.maxMarginLeft) {
 			/**
 			the next required movement would move past the right-most
@@ -219,8 +269,13 @@
 			const inBoundsMarginLeft = this.data.maxMarginLeft - (nextMarginLeft - this.data.maxMarginLeft);
 			this.lightElement.style.marginLeft = inBoundsMarginLeft + 'px';
 			this.data.movementDirection = 'left';
+			didChangeDirection = true;
 		} else {
 			this.lightElement.style.marginLeft = nextMarginLeft + 'px';
+		}
+
+		if (this.data.isStopping && didChangeDirection) {
+			this.data.stoppingBounceCount += 1;
 		}
 	};
 
