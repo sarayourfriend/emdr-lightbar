@@ -15,8 +15,8 @@
 		startButton,
 		rootElement
 	) {
-		this.minSpeed = 3000;
-		this.maxSpeed = 100;
+		this.minSpeed = emdrGetConstant('minLightSpeed');
+		this.maxSpeed = emdrGetConstant('maxLightSpeed');
 		this.lightbar = lightbar;
 		this.socket = socket;
 		this.lightWidthRange = lightWidthRange;
@@ -74,8 +74,18 @@
 
 	TherapistLightbarController.prototype.toggleBounce = function() {
 		if (this.lightbar.isBouncing()) {
-			this.startButton.innerText = 'Start';
-			this.lightbar.stopBounce(this.startButton);
+			/**
+			 * the lightbar continues to bounce and slow down for a
+			 * period of time so we disable the button to prevent the
+			 * therapist from accidentally double clicking it and putting
+			 * the app into a weird state.
+			 */
+			this.startButton.disabled = true;
+			const callback = (function() {
+				this.startButton.innerText = 'Start';
+				this.startButton.disabled = false;
+			}).bind(this);
+			this.lightbar.stopBounce(callback);
 		} else {
 			this.startButton.innerText = 'Stop';
 			this.lightbar.startBounce();
@@ -86,7 +96,7 @@
 
 
     TherapistLightbarController.prototype.setVisible = function(visible) {
-        this.visible = visible;
+		this.visible = visible;
         if (visible) {
             this.rootElement.style.display = 'flex';
             this.startButton.innerText = 'Start';

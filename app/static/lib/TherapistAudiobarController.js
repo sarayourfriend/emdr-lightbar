@@ -8,8 +8,8 @@
         startButton,
         rootElement
     ) {
-        this.maxSpeed = 1500;
-        this.minSpeed = 500;
+        this.maxSpeed = emdrGetConstant('maxAudioSpeed');
+        this.minSpeed = emdrGetConstant('minAudioSpeed');
         this.audiobar = audiobar;
         this.socket = socket;
         this.pitchContainer = pitchContainer;

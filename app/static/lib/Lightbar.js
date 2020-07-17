@@ -28,8 +28,6 @@
 			isStarted: false,
 			speed: 1000,
 			movementDirection: 'right',
-			// @todo move this to a real constant instead of in data
-			minMarginLeft: 0,
 			maxMarginLeft: this.getMaxMarginLeft(),
 			// @todo use lightWidth to set the initial width of the light element
 			lightWidth: '2%',
@@ -37,6 +35,8 @@
 		}, initialData);
 
 		this._doBounce = this._doBounce.bind(this);
+
+		this.minMarginLeft = emdrGetConstant('minMarginLeft');
 	}
 
 	Lightbar.prototype.render = function() {
@@ -107,16 +107,20 @@
 	Lightbar.prototype.startBounce = function() {
 		this.data.isStarted = true;
 		this.data.isStopping = false;
+		this.data.stoppingBounceCount = 0;
+		this.data.onStop = null;
+		this.data.frames = [];
 
 		window.requestAnimationFrame(this._doBounce);
 	};
 
-	Lightbar.prototype.stopBounce = function() {
+	Lightbar.prototype.stopBounce = function(then) {
 		if (this.data) {
 			this.data.isStarted = false;
 			this.data.isStopping = true;
 			this.data.stoppingBounceCount = 0;
 			this.data.stoppingSpeed = this.data.speed;
+			this.data.onStop = then;
 		}
 	};
 
@@ -128,12 +132,38 @@
 		const tolerance = this.data.maxMarginLeft * 0.02;
 		const lowerTolerance = midpoint - (tolerance / 2);
 		const upperTolerance = midpoint + (tolerance / 2);
-
+		
 		if (parsedMarginLeft > lowerTolerance && parsedMarginLeft < upperTolerance) {
 			// within midpoint
 			return true;
 		}
 		return false;
+	}
+
+	Lightbar.prototype._getAveragePxDelta = function() {
+		return this.data.frames.reduce((acc, frame) => acc + frame, 0) / this.data.frames.length;
+	}
+	
+	/**
+	 * @todo(saramarcondes) fix this... it doesn't _really_ work that well...
+	 * mostly just automatically slows down to the target speed
+	 */
+	Lightbar.prototype._getNextStoppingSpeed = function() {
+		const targetSpeed = emdrGetConstant('targetStoppingSpeed');
+		if (this.data.stoppingSpeed >= targetSpeed) {
+			// we're already at the targetSpeed
+			return this.data.stoppingSpeed;
+		}
+		
+		const midpoint = this.data.maxMarginLeft / 2;
+		// "speed" is inverse so target will always be greater than the current speed
+		const distanceToTargetSpeed = targetSpeed - this.data.speed;
+		const averagePxDelta = this._getAveragePxDelta();
+		const estimatedFramesRemaining = midpoint / averagePxDelta;
+
+		const speedDelta = distanceToTargetSpeed / estimatedFramesRemaining;
+
+		return this.data.stoppingSpeed + speedDelta;
 	}
 
 	/**
@@ -159,13 +189,14 @@
 		}
 
 		this.data.maxMarginLeft = this.getMaxMarginLeft();
-		// this is constant really but makes the code more readable than a random 0 all of the place
-		this.data.minMarginLeft = 0;
 		const speed = this.data.isStopping ? this.data.stoppingSpeed : this.data.speed;
 		const pxPerMs = this.data.maxMarginLeft / speed;
 
 		const timeDelta = timestamp - this._previous;
 		const pxDelta = timeDelta * pxPerMs;
+		if (!this.data.isStopping) {
+			this.data.frames.push(pxDelta);
+		}
 		const currentMarginLeft = this.lightElement.style.marginLeft;
 		const parsedMarginLeft = currentMarginLeft !== '' ? parseInt(currentMarginLeft) : 0;
 
@@ -189,16 +220,18 @@
 			if (this._isAtMidpoint()) {
 				this.data.isStarted = false;
 				this.data.isStopping = false;
+
+				if (typeof this.data.onStop === 'function') {
+					this.data.onStop();
+				}
 			}
 		}
 
-		/**
-		 * This doesn't work right now but something here should be done to
-		 * gradually slow down the lightbar as it is stopping
-		 */
-		// if (this.data.isStopping) {
-		// 	this.data.stoppingSpeed = this.data.stoppingSpeed * 0.99;
-		// }
+		if (this.data.isStopping && this.data.stoppingBounceCount === 2) {
+			// speed is actually "time to travel" so bigger is slower
+			const nextStoppingSpeed = this._getNextStoppingSpeed();
+			this.data.stoppingSpeed = nextStoppingSpeed;
+		}
 
 		if (this.data.isStarted || this.data.isStopping) {
 			this._previous = timestamp;
@@ -209,15 +242,20 @@
 		}
 	};
 
+	Lightbar.prototype._changeDirection = function(to) {
+		this.data.movementDirection = to;
+		if (this.data.isStopping) {
+			this.data.stoppingBounceCount += 1;
+		}
+	}
+
 	Lightbar.prototype._handleMoveLeft = function(currentMarginLeft, pxDelta) {
 		const nextMarginLeft = currentMarginLeft - pxDelta;
 
-		let didChangeDirection = false;
-		if (currentMarginLeft === this.data.minMarginLeft) {
-			this.data.movementDirection = 'right';
+		if (currentMarginLeft === this.minMarginLeft) {
+			this._changeDirection(MovementDirection.Right);
 			this._handleMoveRight(currentMarginLeft, pxDelta);
-			didChangeDirection = true;
-		} else if (nextMarginLeft < this.data.minMarginLeft) {
+		} else if (nextMarginLeft < this.minMarginLeft) {
 			/**
 			the next required movement would move past the left-most
 			boundary, so we need to split the difference. For example,
@@ -233,25 +271,18 @@
 			*/
 			const inBoundsMarginLeft = Math.abs(nextMarginLeft);
 			this.lightElement.style.marginLeft = inBoundsMarginLeft + 'px';
-			this.data.movementDirection = 'right';
-			didChangeDirection = true;
+			this._changeDirection(MovementDirection.Right);
 		} else {
 			this.lightElement.style.marginLeft = nextMarginLeft + 'px';
-		}
-
-		if (this.data.isStopping && didChangeDirection) {
-			this.data.stoppingBounceCount += 1;
 		}
 	};
 
 	Lightbar.prototype._handleMoveRight = function(currentMarginLeft, pxDelta) {
 		const nextMarginLeft = currentMarginLeft + pxDelta;
 
-		let didChangeDirection = false;
 		if (currentMarginLeft === this.data.maxMarginLeft) {
-			this.data.movementDirection = 'left';
+			this._changeDirection(MovementDirection.Left);
 			this._handleMoveLeft(currentMarginLeft, pxDelta);
-			didChangeDirection = true;
 		} else if (nextMarginLeft > this.data.maxMarginLeft) {
 			/**
 			the next required movement would move past the right-most
@@ -268,23 +299,18 @@
 			*/
 			const inBoundsMarginLeft = this.data.maxMarginLeft - (nextMarginLeft - this.data.maxMarginLeft);
 			this.lightElement.style.marginLeft = inBoundsMarginLeft + 'px';
-			this.data.movementDirection = 'left';
-			didChangeDirection = true;
+			this._changeDirection(MovementDirection.Left);
 		} else {
 			this.lightElement.style.marginLeft = nextMarginLeft + 'px';
 		}
-
-		if (this.data.isStopping && didChangeDirection) {
-			this.data.stoppingBounceCount += 1;
-		}
 	};
 
-    Lightbar.prototype.setVisible = function(visible) {
+    Lightbar.prototype.setVisible = function(visible, then) {
     	this.visible = visible;
         if (visible) {
             this.rootElement.style.display = 'flex';
         } else {
-            this.stopBounce();
+            this.stopBounce(then);
             this.rootElement.style.display = 'none';
         }
     };
