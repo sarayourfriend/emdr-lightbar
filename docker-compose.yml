@@ -4,17 +4,16 @@ services:
   nginx:
     build: ./nginx
     links:
-      - lightbar-a
-      - lightbar-b
-      - lightbar-c
-      - lightbar-d
+      - lightbar
     ports:
      - "80:80"
     networks:
       - lightbar
 
-  lightbar-a:
-    build: ./app
+  lightbar:
+    build: 
+      context: .
+      dockerfile: ./app/Dockerfile
     links:
       - redis
     expose:
@@ -23,39 +22,8 @@ services:
       - FLASK_SECRET_KEY
     networks:
       - lightbar
-
-  lightbar-b:
-    build: ./app
-    links:
-      - redis
-    expose:
-      - "5000"
-    environment:
-      - FLASK_SECRET_KEY
-    networks:
-      - lightbar
-
-  lightbar-c:
-    build: ./app
-    links:
-      - redis
-    expose:
-      - "5000"
-    environment:
-      - FLASK_SECRET_KEY
-    networks:
-      - lightbar
-
-  lightbar-d:
-    build: ./app
-    links:
-      - redis
-    expose:
-      - "5000"
-    environment:
-      - FLASK_SECRET_KEY
-    networks:
-      - lightbar
+    volumes: 
+      - ./app:/
 
   redis:
     image: redis:alpine

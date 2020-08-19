@@ -52,7 +52,7 @@
 	TherapistLightbarController.prototype._updateLightWidth = function() {
 		const value = this.lightWidthRange.value;
 		const percentage = parseInt(value) / 100;
-		this.lightbar.updateLightWidth((30 * percentage) + '%');
+		this.lightbar.updateLightWidth((30 * percentage));
 	};
 
 	TherapistLightbarController.prototype.handleLightWidthChange = function() {

@@ -5,7 +5,7 @@ import os
 import json
 
 import dotenv
-from flask import Flask, escape, request, redirect, send_from_directory, session, render_template, url_for, abort
+from flask import Flask, escape, request, redirect, send_from_directory, session, render_template, url_for, abort, jsonify
 from flask_socketio import SocketIO, send, emit
 from redis import Redis
 
@@ -90,6 +90,13 @@ def therapist_session():
         session_id=session_id,
         _external=True)
 
+    if request.content_type == 'application/json':
+        return jsonify({
+            session_url: session_url,
+            session_id: session_id,
+            initial_settings: initial_settings
+        })
+
     return render_template(
         'therapist/session.html',
         session_url=session_url,
@@ -129,6 +136,9 @@ def client_session(session_id):
 
     if existing_settings is None:
         return abort(404)
+
+    if request.content_type == 'application/json':
+        return jsonify(json.loads(existing_settings))
 
     return render_template(
         'client/session.html',
