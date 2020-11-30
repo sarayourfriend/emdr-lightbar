@@ -2,24 +2,14 @@
   margin-top: 3em;
   flex-grow: 1;
   height: 10em;
-  border: 3px solid black;
+  border: 3px solid var(--color);
   display: flex;
   align-items: start;
   justify-content: start;
 }
 
 #light {
-  background-color: black;
+  background-color: var(--color);
   width: 2em;
   height: 100%;
-}
-
-@media (prefers-color-scheme: dark) {
-  #lightbar {
-    border-color: white;
-  }
-
-  #light {
-    background-color: white;
-  }
 }

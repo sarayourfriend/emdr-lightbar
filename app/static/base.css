@@ -1,3 +1,23 @@
+:root {
+    --white: white;
+    --black: black;
+    --link-color: initial;
+    --link-visited: initial;
+}
+
+html {
+    background-color: var(--white);
+    color: var(--black);
+}
+
+a {
+    color: var(--link-color);
+}
+
+a:visited {
+    color: var(--link-visited);
+}
+
 .copy {
     padding-left: 2em;
     padding-right: 2em;
@@ -10,7 +30,9 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        background-color: rgb(29, 29, 29);
-        color: rgb(240, 240, 240);
+        --white: rgb(29, 29, 29);
+        --black: rgb(240, 240, 240);
+        --link-color: rgb(176, 176, 253);
+        --link-visited: rgb(233, 233, 255);
     }
 }
