@@ -13,3 +13,13 @@
   width: 2em;
   height: 100%;
 }
+
+@media (prefers-color-scheme: dark) {
+  #lightbar {
+    border-color: white;
+  }
+
+  #light {
+    background-color: white;
+  }
+}

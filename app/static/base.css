@@ -7,3 +7,10 @@
     margin: auto;
     margin-bottom: 2em;
 }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        background-color: rgb(29, 29, 29);
+        color: rgb(240, 240, 240);
+    }
+}
