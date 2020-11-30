@@ -28,11 +28,9 @@ a:visited {
     margin-bottom: 2em;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --white: rgb(29, 29, 29);
-        --black: rgb(240, 240, 240);
-        --link-color: rgb(176, 176, 253);
-        --link-visited: rgb(233, 233, 255);
-    }
+:root[data-theme="dark"] {
+    --white: rgb(29, 29, 29);
+    --black: rgb(240, 240, 240);
+    --link-color: rgb(176, 176, 253);
+    --link-visited: rgb(233, 233, 255);
 }
