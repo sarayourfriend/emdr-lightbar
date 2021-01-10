@@ -1,0 +1,11 @@
+.lightbar {
+    border: 2px solid var(--black);
+    width: 98%;
+    height: 250px;
+    margin: auto;
+}
+
+.light {
+    background-color: var(--black);
+    height: 100%;
+}
