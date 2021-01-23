@@ -39,7 +39,7 @@
 
 	TherapistLightbarController.prototype.emitNewSettings = function() {
 		// The Lightbar class manages its own serialization in Lightbar.prototype.toJSON
-		this.socket.emit('therapist-new-settings', this.lightbar);
+		this.socket.emit('therapist-new-settings', this.lightbar, 'asdf');
 	};
 
 	TherapistLightbarController.prototype.handleInitialSettings = function(initialSettings) {

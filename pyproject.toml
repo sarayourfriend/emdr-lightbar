@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "emdr-lightbar"
+version = "0.1.0"
+description = ""
+authors = ["Sara Marcondes <saram@fastmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Flask = "^1.1.2"
+Flask-SocketIO = "^5.0.1"
+gevent = "^21.1.0"
+python-dotenv = "^0.15.0"
+redis = "^3.5.3"
+Flask-Session = "^0.3.2"
+Flask-Cors = "^3.0.10"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

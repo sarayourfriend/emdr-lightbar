@@ -22,7 +22,7 @@ redis = Redis.from_url(os.getenv('REDIS_URL'), decode_responses=True)
 socketio_kwargs = {
     'async_mode': 'threading',
     'message_queue': os.getenv('REDIS_URL'),
-    'cors_allowed_origins': 'http://localhost:3000'
+    'cors_allowed_origins': '*'
 }
 
 if os.getenv('FLASK_ENV') == 'production':
@@ -62,13 +62,29 @@ def index():
         new_client_session=url_for('new_client_session'))
 
 
-@app.route('/rest/session/', methods=['POST'])
+@app.route('/rest/session/', methods=['GET', 'POST'])
 @cross_origin()
 def new_session():
-    session_id = new_session_id()
-    initial_settings = DEFAULT_SESSION_SETTINGS_SERIALIZED
+    should_create_new_session = (
+        (request.method == 'GET' and 'session_id' not in session)
+        or request.method == 'POST'
+    )
 
-    redis.set(session_id, initial_settings)
+    initial_settings = None
+    if should_create_new_session:
+        if 'session_id' in session:
+            # clear the existing session settings
+            redis.delete(session['session_id'])
+
+        session_id = new_session_id()
+        session['session_id'] = session_id
+    else:
+        session_id = session['session_id']
+        initial_settings = redis.get(session_id)
+
+    if initial_settings is None:
+        initial_settings = DEFAULT_SESSION_SETTINGS_SERIALIZED
+        redis.set(session_id, initial_settings)
 
     return jsonify(session_id=session_id,
         initial_settings=initial_settings)
@@ -158,8 +174,8 @@ def page_not_found(e):
 
 
 @socketio.on('therapist-new-settings')
-def handle_new_settings(new_settings):
-    namespace = session_id
+def handle_new_settings(new_settings, session_id):
+    namespace = f'/{session_id}'
     redis.set(session_id, json.dumps(new_settings))
     emit('client-new-settings', new_settings, namespace=namespace, broadcast=True)
 

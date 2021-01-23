@@ -1,6 +1,5 @@
 import { useReducer } from 'react';
-import useApiState from '../../socket/useApiState';
-import { useSessionId } from '../../api/session';
+import useApiState from '../../hooks/useApiState';
 
 import { REQUEST_ANIMATION_FRAME_DELTA, TOGGLE_START, SET_WIDTH, SET_SPEED, RECEIVE_API_STATE } from './actions';
 
@@ -65,17 +64,22 @@ const stop = (state) => {
     };
 };
 
+const getMidpoint = (state) => state.maxMarginLeft / 2;
+const getIsAtMidpoint = (state) => {
+    const midpoint = getMidpoint(state);
+    const tolerance = state.maxMarginLeft * 0.02;
+    const lowerTolerance = midpoint - (tolerance / 2);
+    const upperTolerance = midpoint + (tolerance / 2);
+
+    return state.marginLeft > lowerTolerance && state.marginLeft < upperTolerance;
+}
+
 const stopIfNeeded = (state) => {
     if (!state.isStopping || state.stoppingBounceCount < 2) {
         return state;
     }
 
-    const midpoint = state.maxMarginLeft / 2;
-    const tolerance = state.maxMarginLeft * 0.02;
-    const lowerTolerance = midpoint - (tolerance / 2);
-    const upperTolerance = midpoint + (tolerance / 2);
-
-    const isAtMidpoint = state.marginLeft > lowerTolerance && state.marginLeft < upperTolerance;
+    const isAtMidpoint = getIsAtMidpoint(state);
 
     if (isAtMidpoint) {
         return stop(state);
@@ -105,6 +109,13 @@ const start = (state) => ({
     isStarted: true,
 });
 
+/**
+ * The lightbar originates at rest in at the midpoint. In the situation where the therapist
+ * has hit stop and the therapist's state is already stopped but the client's state has not
+ * yet reached the midpoint, we want to continue moving the light until it rests at the midpoint.
+ */
+const shouldMoveLightbar = (state) => state.isStarted || state.isStopping || !getIsAtMidpoint(state);
+
 const initialState = {
     isStarted: false,
     isStopping: false,
@@ -112,14 +123,15 @@ const initialState = {
     speed: 1000,
     movementDirection: 'right',
     maxMarginLeft: 98,
-    marginLeft: 0,
+    // start at midpoint
+    marginLeft: 98 / 2,
     width: 2
 };
 
 const reducer = (state, action) => {
     switch (action.type) {
         case REQUEST_ANIMATION_FRAME_DELTA: {
-            if (state.isStarted || state.isStopping) {
+            if (shouldMoveLightbar(state)) {
                 return moveLightbar(state, action.delta);
             }
             return state;
@@ -148,6 +160,7 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 ...action.receivedState,
+                maxMarginLeft: 100 - action.receivedState.width
             }
         }
 
@@ -156,9 +169,8 @@ const reducer = (state, action) => {
     }
 };
 
-const useLightbarReducer = (isTherapist) => {
-    const [state, dispatch] = useReducer(reducer, {...initialState, isTherapist});
-    const sessionId = useSessionId();
+const useLightbarReducer = ({ isTherapist, sessionId }) => {
+    const [state, dispatch] = useReducer(reducer, { ...initialState, isTherapist });
     useApiState(sessionId, state, dispatch);
     return [state, dispatch];
 };

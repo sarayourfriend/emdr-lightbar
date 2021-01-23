@@ -1,10 +1,20 @@
-import logo from './logo.svg';
 import './App.css';
-import TherapistLightbarContainer from './components/TherapistLightbarContainer';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+import TherapistPage from './pages/TherapistPage';
+import ClientSessionPage from './pages/ClientSessionPage';
 
 function App() {
   return (
-    <TherapistLightbarContainer />
+    <Router>
+      <Switch>
+        <Route path="/therapist/" component={TherapistPage} />
+        <Route path="/session/:sessionId" component={ClientSessionPage} />
+      </Switch>
+    </Router>
   );
 }
 

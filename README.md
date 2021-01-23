@@ -50,13 +50,8 @@ Install Docker, and then a simple `docker-compose up` will run the application o
 
 To run locally:
 
-1.  Install python3
-2.  Clone the repo
-3.  Create a venv: `python3 -m venv venv`
-4.  Initialize the venv: `. venv/bin/activate`
-5.  Install dependencies: `pip install -r requirements.txt`
-6.  Add a `.env` file with `FLASK_SECRET_KEY` set to something (can be anything in dev)
-7.  Run the Flask development server: `env FLASK_ENV=development python ./app/app.py`
+1. `poetry install`
+2. `FLASK_ENV=development poetry run python app/app.py`
 
 # Tech TODOs
 
