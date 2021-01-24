@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { setSpeed, setWidth, toggleStart } from '../reducers/lightbar';
+import { setSpeed, setWidth, toggleStart } from '../../reducers/lightbar';
 import StartStopButton from './StartStopButton';
 import Speed from './Speed';
 import Width from './Width';

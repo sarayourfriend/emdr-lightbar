@@ -1,2 +1,2 @@
-export { default } from './useLightbarReducer';
+export * from './reducer';
 export * from './actions';

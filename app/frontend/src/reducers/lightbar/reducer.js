@@ -1,6 +1,3 @@
-import { useReducer } from 'react';
-import useApiState from '../../hooks/useApiState';
-
 import { REQUEST_ANIMATION_FRAME_DELTA, TOGGLE_START, SET_WIDTH, SET_SPEED, RECEIVE_API_STATE } from './actions';
 
 const minMarginLeft = 0;
@@ -65,9 +62,10 @@ const stop = (state) => {
 };
 
 const getMidpoint = (state) => state.maxMarginLeft / 2;
-const getIsAtMidpoint = (state) => {
+
+const getIsAtMidpoint = (state, toleranceFactor = 0.02) => {
     const midpoint = getMidpoint(state);
-    const tolerance = state.maxMarginLeft * 0.02;
+    const tolerance = state.maxMarginLeft * toleranceFactor;
     const lowerTolerance = midpoint - (tolerance / 2);
     const upperTolerance = midpoint + (tolerance / 2);
 
@@ -114,9 +112,9 @@ const start = (state) => ({
  * has hit stop and the therapist's state is already stopped but the client's state has not
  * yet reached the midpoint, we want to continue moving the light until it rests at the midpoint.
  */
-const shouldMoveLightbar = (state) => state.isStarted || state.isStopping || !getIsAtMidpoint(state);
+const shouldMoveLightbar = (state) => state.isStarted || state.isStopping || !getIsAtMidpoint(state, 0.1);
 
-const initialState = {
+export const initialState = {
     isStarted: false,
     isStopping: false,
     stoppingBounceCount: 0,
@@ -128,7 +126,7 @@ const initialState = {
     width: 2
 };
 
-const reducer = (state, action) => {
+export const reducer = (state, action) => {
     switch (action.type) {
         case REQUEST_ANIMATION_FRAME_DELTA: {
             if (shouldMoveLightbar(state)) {
@@ -149,6 +147,7 @@ const reducer = (state, action) => {
                 ...state,
                 width: action.width,
                 maxMarginLeft: 100 - action.width,
+                marginLeft: state.isStarted || state.isStopping ? state.marginLeft : getMidpoint(state),
             };
         }
 
@@ -168,11 +167,3 @@ const reducer = (state, action) => {
             return state;
     }
 };
-
-const useLightbarReducer = ({ isTherapist, sessionId }) => {
-    const [state, dispatch] = useReducer(reducer, { ...initialState, isTherapist });
-    useApiState(sessionId, state, dispatch);
-    return [state, dispatch];
-};
-
-export default useLightbarReducer;
