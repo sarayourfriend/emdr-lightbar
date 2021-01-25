@@ -1,7 +1,7 @@
-import { BASE_URL } from '../constants';
+import { API_BASE_URL } from '../constants';
 
 export const getNewSessionId = () =>
-    fetch(`${BASE_URL}/rest/session/`, {
+    fetch(`${API_BASE_URL}rest/session/`, {
         method: 'POST',
         mode: 'cors'
     })

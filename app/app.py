@@ -14,7 +14,7 @@ from utils import new_session_id
 
 dotenv.load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/frontend/build')
 CORS(app, origins='*')
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 redis = Redis.from_url(os.getenv('REDIS_URL'), decode_responses=True)
@@ -49,17 +49,19 @@ DEFAULT_SESSION_SETTINGS = {
 DEFAULT_SESSION_SETTINGS_SERIALIZED = json.dumps(DEFAULT_SESSION_SETTINGS)
 
 
-@app.route('/static/<path:path>')
-def send_static(path):
-    return send_from_directory('static', path)
-
-
 @app.route('/')
 def index():
-    return render_template(
-        'index/index.html',
-        new_therapist_session=url_for('therapist_session'),
-        new_client_session=url_for('new_client_session'))
+    return send_from_directory('frontend/build', 'index.html')
+
+
+@app.route('/<path:path>')
+def any_other_path(path):
+    return send_from_directory('frontend/build', 'index.html')
+
+
+@app.route('/static/<path:path>')
+def serve_frontend(path):
+    return send_from_directory('frontend/build/static', path)
 
 
 @app.route('/rest/session/', methods=['GET', 'POST'])
@@ -88,84 +90,6 @@ def new_session():
 
     return jsonify(session_id=session_id,
         initial_settings=initial_settings)
-
-
-@app.route('/therapist/', methods=['GET', 'POST'])
-def therapist_session():
-    """
-    Creates a new session for a therapist if one does not already exist.
-    On POST, it forces the creation of a new session (this is how a
-    therapist is able to refresh their session ID)
-    """
-    should_create_new_session = (
-        (request.method == 'GET' and 'session_id' not in session)
-        or request.method == 'POST'
-    )
-
-    initial_settings = None
-    if should_create_new_session:
-        if 'session_id' in session:
-            # clear the existing session settings
-            redis.delete(session['session_id'])
-
-        session_id = new_session_id()
-        session['session_id'] = session_id
-    else:
-        session_id = session['session_id']
-        initial_settings = redis.get(session_id)
-
-    if initial_settings is None:
-        initial_settings = DEFAULT_SESSION_SETTINGS_SERIALIZED
-        redis.set(session_id, initial_settings)
-
-    session_url = url_for(
-        'client_session',
-        session_id=session_id,
-        _external=True)
-
-    return render_template(
-        'therapist/session.html',
-        session_url=session_url,
-        session_id=session_id,
-        initial_settings=initial_settings)
-
-
-@app.route('/therapist/help/')
-def therapist_help():
-    return render_template('therapist/help.html')
-
-
-@app.route('/session/')
-def new_client_session():
-    if 's' in request.args:
-        return redirect(
-            url_for('client_session', session_id=request.args['s']))
-
-    return render_template('client/index.html')
-
-
-@app.route('/session/<session_id>/')
-def client_session(session_id):
-    session_id_needs_help = (
-        not session_id.isupper()
-        or '-' not in session_id
-        or len(session_id) != 7    
-    )
-    if session_id_needs_help:
-        session_id = session_id.upper().replace(' ', '-')
-        if len(session_id) != 7:
-            session_id = f'{session_id[:3]}-{session_id[3:]}'
-
-        return redirect(url_for('client_session', session_id=session_id))
-
-    existing_settings = redis.get(session_id)
-
-    if existing_settings is None:
-        return abort(404)
-
-    return render_template(
-        'client/session.html',
-        initial_settings=existing_settings)
 
 
 @app.errorhandler(404)

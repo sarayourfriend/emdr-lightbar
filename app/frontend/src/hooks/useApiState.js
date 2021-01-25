@@ -2,10 +2,9 @@ import { useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import debounce from 'lodash.debounce';
 import { receiveApiState } from '../reducers/lightbar';
-import { BASE_URL } from '../constants';
+import { API_BASE_URL } from '../constants';
 
 const debouncedEmitTherapistNewSettings = debounce((socket, newSettings, sessionId) => {
-    console.log('emitting');
     socket.emit('therapist-new-settings', newSettings, sessionId);
 }, 100, { maxWait: 300 });
 
@@ -15,7 +14,7 @@ const useApiState = (sessionId, { isTherapist, isStarted, isStopping, width, spe
 
     useEffect(() => {
         if (sessionId) {
-            const url = isTherapist ? BASE_URL : `${BASE_URL}/${sessionId}`;
+            const url = isTherapist ? API_BASE_URL : `${API_BASE_URL}${sessionId}`;
             socketRef.current = io(url);
         }
     }, [isTherapist, sessionId]);
@@ -37,7 +36,6 @@ const useApiState = (sessionId, { isTherapist, isStarted, isStopping, width, spe
             socketRef.current.on(
                 'client-new-settings',
                 (receivedState) => {
-                    console.log('receving', receivedState);
                     dispatch(receiveApiState(receivedState))
                 },
             );

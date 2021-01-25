@@ -1,3 +1,4 @@
 #! /bin/sh
-cd app
+cd app/frontend
+yarn install && yarn build
 env FLASK_ENV=production uwsgi uwsgi.ini

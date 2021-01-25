@@ -1,29 +1,30 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Heading, Text } from '@wp-g2/components';
+import Layout from '../components/Layout';
 
 export default function TherapistHelpPage() {
     return (
-        <>
-            <h1>EMDR Lightbar</h1>
-            <h2>Therapist Help</h2>
-            <p>
-                Toggling start and stop will automatically start and stop the lightbar's movement on your client's screen. Likewise, changes to the speed and width of the light will automatically be reflected in your client's browser. 
-            </p>
+        <Layout>
+            <Heading size={1}>EMDR Lightbar</Heading>
+            <Heading size={2} lineHeight="2">Therapist Help</Heading>
+            <Text size="body">
+                <p>
+                    Clicking the start/stop button will start or stop the lightbar's movement on both your sceen and your client's screen. Likewise, changes to the speed and width of the light will automatically be reflected on your client's screen.
+                </p>
 
-            <p>
-                You may create as many session URLs as you would like, even as many as one per client if you prefer. You will only be able to control one session URL at a time. 
-            </p>
+                <p>
+                    To create a new session, simply refresh the page. You may do this as many times as you'd like. You will only be able to control one session at a time.
+                </p>
 
-            <p>
-                To get a feel for what your client will experience, open the session URL in a private tab and play with the lightbar settings in this tab. 
-            </p>
+                <p>
+                    To get a feel for what your client will experience, open the app in a separate browser tab and go to <Link to="/session/">the client start page</Link> and enter your session ID.
+                </p>
 
-            <p>
-                The control over the lightbar in the session URL is locked to only your browser. If you use a new browser or a different computer, you will be given a new session URL. Remember, they're free, and you can generate as many as you'd like, so just be sure to share the one you're currently in control of with your client. 
-            </p>
-
-            <p>
-                If you still need help, please email <a href="mailto:emdr_lightbar@fastmail.com">emdr_lightbar (at) fastmail.com</a> for assistance
-            </p>
-        </>
+                <p>
+                    If you still need help, please email <a href="mailto:emdr_lightbar@fastmail.com">emdr_lightbar (at) fastmail.com</a> for assistance.
+                </p>
+            </Text>
+        </Layout>
     )
 }

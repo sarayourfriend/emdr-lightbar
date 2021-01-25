@@ -1,1 +1,1 @@
-export const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://emdr-lightbar.herokuapp.com' : 'http://localhost:5000';
+export const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5000/';

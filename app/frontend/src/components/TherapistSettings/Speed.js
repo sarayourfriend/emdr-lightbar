@@ -1,19 +1,14 @@
-import React, { useCallback } from 'react';
+import React from 'react';
+import { FormGroup, Slider } from '@wp-g2/components';
 
 const maxSpeed = 3000;
 const minSpeed = 100;
 
 const Speed = ({ speed, onChange }) => {
-    const handleChange = useCallback((event) => {
-        const value = event.target.value;
-        onChange(value);
-    }, [onChange]);
-
     return (
-        <label>
-            Light speed:
-            <input type="range" min={minSpeed} max={maxSpeed} value={speed} onChange={handleChange} />
-        </label>
+        <FormGroup label="Light speed">
+            <Slider min={minSpeed} max={maxSpeed} value={speed} onChange={onChange} />
+        </FormGroup>
     );
 };
 
