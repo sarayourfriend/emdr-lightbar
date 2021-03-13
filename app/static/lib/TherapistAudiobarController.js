@@ -1,13 +1,13 @@
-import { emdrGetConstant } from './utils';
-
-export default class TherapistAudiobarController {
-    constructor(audiobar,
+(function() {
+    function TherapistAudiobarController(
+        audiobar,
         visible,
         socket,
         pitchContainer,
         speedRange,
         startButton,
-        rootElement) {
+        rootElement
+    ) {
         this.maxSpeed = emdrGetConstant('maxAudioSpeed');
         this.minSpeed = emdrGetConstant('minAudioSpeed');
         this.audiobar = audiobar;
@@ -24,12 +24,12 @@ export default class TherapistAudiobarController {
         this.setVisible(visible);
     }
 
-    initSpeedAndPitch() {
+    TherapistAudiobarController.prototype.initSpeedAndPitch = function() {
         this._renderPitchButtons();
         this._updateSpeed();
-    }
-    
-    _renderPitchButtons() {
+    };
+
+    TherapistAudiobarController.prototype._renderPitchButtons = function() {
         const availablePitches = this.audiobar.getPitches();
         Object.keys(availablePitches).forEach(pitchName => {
             const pitchButton = document.createElement('button');
@@ -40,42 +40,42 @@ export default class TherapistAudiobarController {
             pitchButton.onclick = () => this.handlePitchClick(pitchButton);
             this.pitchContainer.appendChild(pitchButton);
         });
-    }
+    };
 
-    emitNewSettings() {
+    TherapistAudiobarController.prototype.emitNewSettings = function() {
         this.socket.emit('therapist-new-settings', this.audiobar);
-    }
-    
-    handleInitialSettings(initialSettings) {
+    };
+
+    TherapistAudiobarController.prototype.handleInitialSettings = function(initialSettings) {
         this.audiobar.updateSettings(initialSettings);
         if (initialSettings.isStarted) {
             this.startButton.innerText = 'Stop';
         }
-    }
+    };
 
-    _updatePitch(buttonClicked) {
+    TherapistAudiobarController.prototype._updatePitch = function(buttonClicked) {
         const pitchName = buttonClicked.dataset.pitchName;
         this.audiobar.setPitch(pitchName);
-    }
-    
-    _updateSpeed() {
+    };
+
+    TherapistAudiobarController.prototype._updateSpeed = function() {
         const value = this.speedRange.value;
         const percentage = (100 - parseInt(value)) / 100;
         const newSpeed = ((this.maxSpeed - this.minSpeed) * percentage) + this.minSpeed;
         this.audiobar.setSpeed(newSpeed);
-    }
-    
-    handlePitchClick(buttonClicked) {
+    };
+
+    TherapistAudiobarController.prototype.handlePitchClick = function(buttonClicked) {
         this._updatePitch(buttonClicked);
         this.emitNewSettings();
-    }
-    
-    handleSpeedChange() {
+    };
+
+    TherapistAudiobarController.prototype.handleSpeedChange = function() {
         this._updateSpeed();
         this.emitNewSettings();
-    }
-    
-    toggleSound() {
+    };
+
+    TherapistAudiobarController.prototype.toggleSound = function() {
         const isSounding = this.audiobar.toggleSound();
         this.emitNewSettings();
         if (isSounding) {
@@ -83,9 +83,9 @@ export default class TherapistAudiobarController {
         } else {
             this.startButton.innerText = 'Start';
         }
-    }
-    
-    setVisible(visible) {
+    };
+
+    TherapistAudiobarController.prototype.setVisible = function(visible) {
         this.visible = visible;
         if (visible) {
             this.rootElement.style.display = 'flex';
@@ -94,5 +94,7 @@ export default class TherapistAudiobarController {
             this.rootElement.style.display = 'none';
         }
         this.audiobar.setVisible(visible);
-    }
-}
+    };
+
+    window.TherapistAudiobarController = TherapistAudiobarController;
+})();

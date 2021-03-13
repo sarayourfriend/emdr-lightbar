@@ -2,5 +2,3 @@ venv
 *sublime-*
 __pycache__
 .env
-dist
-node_modules

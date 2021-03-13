@@ -1,6 +1,7 @@
 {% extends "layouts/base.html" %}
 {% block css %}
-    <link rel="stylesheet" href="/static/dist/client-session.min.css" />
+    <link rel="stylesheet" href="/static/lib/Lightbar.css" />
+    <link rel="stylesheet" href="/static/lib/Audiobar.css" />
 {% endblock %}
 
 {% block content %}
@@ -10,5 +11,11 @@
 
 {% block scripts %}
     {{ super() }}
-    <script src="/static/dist/client-session.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="/static/lib/Lightbar.js"></script>
+    <script src="/static/lib/Audiobar.js"></script>
+    <script src="/static/lib/ClientLightbarController.js"></script>
+    <script src="/static/lib/ClientAudiobarController.js"></script>
+    <script src="/static/lib/ClientMethodController.js"></script>
+    <script src="/static/client-session.js"></script>
 {% endblock %}
