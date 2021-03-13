@@ -4,14 +4,14 @@ monkey.patch_all()
 import os
 import json
 
-import dotenv
+from dotenv import load_dotenv
 from flask import Flask, escape, request, redirect, send_from_directory, session, render_template, url_for, abort
 from flask_socketio import SocketIO, send, emit
 from redis import Redis
 
 from utils import new_session_id
 
-dotenv.load_dotenv()
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
