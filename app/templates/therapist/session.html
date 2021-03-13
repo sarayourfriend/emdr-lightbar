@@ -1,8 +1,6 @@
 {% extends "layouts/base.html" %}
 {% block css %}
-    <link rel="stylesheet" href="/static/therapist-session.css" />
-    <link rel="stylesheet" href="/static/lib/Lightbar.css" />
-    <link rel="stylesheet" href="/static/lib/Audiobar.css" />
+    <link rel="stylesheet" href="/static/dist/therapist-session.min.css" />
 {% endblock %}
 
 {% block content %}
@@ -27,12 +25,5 @@
 
 {% block scripts %}
     {{ super() }}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-    <script src="/static/lib/Clipboard.js"></script>
-    <script src="/static/lib/Lightbar.js"></script>
-    <script src="/static/lib/Audiobar.js"></script>
-    <script src="/static/lib/TherapistLightbarController.js"></script>
-    <script src="/static/lib/TherapistAudiobarController.js"></script>
-    <script src="/static/lib/TherapistMethodController.js"></script>
-    <script src="/static/therapist-session.js"></script>
+    <script type="application/javascript" src="/static/dist/therapist-session.min.js"></script>
 {% endblock %}
