@@ -1,13 +1,15 @@
-function ClientLightbarController(lightbar) {
-    this.lightbar = lightbar;
-}
+(function() {
+    function ClientLightbarController(lightbar) {
+        this.lightbar = lightbar;
+    }
 
-ClientLightbarController.prototype.handleNewSettings = function(newSettings) {
-    this.lightbar.updateSettings(newSettings);
-};
+    ClientLightbarController.prototype.handleNewSettings = function(newSettings) {
+        this.lightbar.updateSettings(newSettings);
+    };
 
-ClientLightbarController.prototype.setVisible = function(visible) {
-    this.lightbar.setVisible(visible);
-};
+    ClientLightbarController.prototype.setVisible = function(visible) {
+        this.lightbar.setVisible(visible);
+    };
 
-export default ClientLightbarController;
+    window.ClientLightbarController = ClientLightbarController;
+})();
