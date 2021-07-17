@@ -1,66 +1,21 @@
 version: '3'
 
 services:
-  nginx:
-    build: ./nginx
+  lightbar:
+    build: .
     links:
-      - lightbar-a
-      - lightbar-b
-      - lightbar-c
-      - lightbar-d
+      - redis
     ports:
-     - "80:80"
-    networks:
-      - lightbar
-
-  lightbar-a:
-    build: ./app
-    links:
-      - redis
-    expose:
-      - "5000"
+      - 80:5000
     environment:
-      - FLASK_SECRET_KEY
-    networks:
-      - lightbar
-
-  lightbar-b:
-    build: ./app
-    links:
-      - redis
-    expose:
-      - "5000"
-    environment:
-      - FLASK_SECRET_KEY
-    networks:
-      - lightbar
-
-  lightbar-c:
-    build: ./app
-    links:
-      - redis
-    expose:
-      - "5000"
-    environment:
-      - FLASK_SECRET_KEY
-    networks:
-      - lightbar
-
-  lightbar-d:
-    build: ./app
-    links:
-      - redis
-    expose:
-      - "5000"
-    environment:
-      - FLASK_SECRET_KEY
+      REDIS_URL: redis://redis
     networks:
       - lightbar
 
   redis:
-    image: redis:alpine
+    image: redis
     expose:
-      - "6379"
+      - 6379
     networks:
       - lightbar
 
