@@ -1,12 +1,13 @@
-from gevent import monkey
-monkey.patch_all()
+import eventlet
+eventlet.monkey_patch()
 
 import os
 import json
 
 import dotenv
-from flask import Flask, escape, request, redirect, send_from_directory, session, render_template, url_for, abort
-from flask_socketio import SocketIO, send, emit
+from flask import Flask, request, redirect, send_from_directory, session, render_template, url_for, abort
+from flask_socketio import SocketIO, emit
+from flask_session import Session
 from redis import Redis
 
 from utils import new_session_id
@@ -15,21 +16,22 @@ dotenv.load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
-redis = Redis.from_url(os.getenv('REDIS_URL'), decode_responses=True)
+app.config['SESSION_TYPE'] = 'redis'
+redis = Redis.from_url(os.getenv('REDIS_URL'))
+app.config['SESSION_REDIS'] = redis
+Session(app)
 
-socketio_kwargs = {
-    'async_mode': 'threading',
-}
+socketio_kwargs = {}
 
 if os.getenv('FLASK_ENV') == 'production':
     socketio_kwargs = {
-        'async_mode': 'gevent_uwsgi',
-        'message_queue': os.getenv('REDIS_URL'),
+        **socketio_kwargs,
     }
 
 
 socketio = SocketIO(
     app,
+    message_queue=os.getenv('REDIS_URL'),
     **socketio_kwargs
 )
 
@@ -79,7 +81,7 @@ def therapist_session():
         session['session_id'] = session_id
     else:
         session_id = session['session_id']
-        initial_settings = redis.get(session_id)
+        initial_settings = bytes.decode(redis.get(session_id))
 
     if initial_settings is None:
         initial_settings = DEFAULT_SESSION_SETTINGS_SERIALIZED
@@ -125,7 +127,7 @@ def client_session(session_id):
 
         return redirect(url_for('client_session', session_id=session_id))
 
-    existing_settings = redis.get(session_id)
+    existing_settings = bytes.decode((redis.get(session_id)))
 
     if existing_settings is None:
         return abort(404)
