@@ -61,11 +61,13 @@ async def therapist_session():
         session['session_id'] = session_id
     else:
         session_id = session['session_id']
-        initial_settings = bytes.decode(redis.get(session_id))
+        initial_settings = redis.get(session_id)
 
     if initial_settings is None:
         initial_settings = DEFAULT_SESSION_SETTINGS_SERIALIZED
         redis.set(session_id, initial_settings)
+    else:
+        initial_settings = bytes.decode(initial_settings)
 
     session_url = url_for(
         'client_session',

@@ -1,6 +1,6 @@
-FROM python:3.8-slim
+FROM python:3.9-slim
 
-ENV FLASK_ENV=production
+ENV QUART_ENV=production
 ENV PYTHONUNBUFFERED=1
 ENV PIP_NO_CACHE_DIR=1
 
@@ -10,6 +10,6 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-COPY app/ /app
+COPY app/ /app/app
 
-CMD ["gunicorn", "--bind=0.0.0.0:5000", "--workers=1", "--worker-class", "eventlet", "app:app"]
+CMD ["hypercorn", "--bind=0.0.0.0:5000", "--workers=4", "app.app:app"]
