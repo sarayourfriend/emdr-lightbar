@@ -9,7 +9,6 @@
 	function TherapistLightbarController(
 		lightbar,
 		visible,
-		socket,
 		lightWidthRange,
 		lightSpeedRange,
 		startButton,
@@ -18,7 +17,6 @@
 		this.minSpeed = emdrGetConstant('minLightSpeed');
 		this.maxSpeed = emdrGetConstant('maxLightSpeed');
 		this.lightbar = lightbar;
-		this.socket = socket;
 		this.lightWidthRange = lightWidthRange;
 		this.lightSpeedRange = lightSpeedRange;
 		this.startButton = startButton;
@@ -38,8 +36,7 @@
 	};
 
 	TherapistLightbarController.prototype.emitNewSettings = function() {
-		// The Lightbar class manages its own serialization in Lightbar.prototype.toJSON
-		this.socket.emit('therapist-new-settings', this.lightbar);
+		fetch('/therapist/settings', { method: "POST", credentials: "include", body: JSON.stringify(this.lightbar)});
 	};
 
 	TherapistLightbarController.prototype.handleInitialSettings = function(initialSettings) {

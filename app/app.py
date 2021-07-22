@@ -1,39 +1,19 @@
-import eventlet
-eventlet.monkey_patch()
-
 import os
 import json
 
 import dotenv
-from flask import Flask, request, redirect, send_from_directory, session, render_template, url_for, abort
-from flask_socketio import SocketIO, emit
-from flask_session import Session
+from quart import Quart, request, redirect, send_from_directory, session, render_template, url_for, abort, make_response
 from redis import Redis
+from asyncio import sleep
 
 from .utils import new_session_id
 
 dotenv.load_dotenv()
 
-app = Flask(__name__)
-app.secret_key = os.getenv('FLASK_SECRET_KEY')
-app.config['SESSION_TYPE'] = 'redis'
+app = Quart(__name__)
+app.secret_key = os.getenv('QUART_SECRET_KEY')
 redis = Redis.from_url(os.getenv('REDIS_URL'))
-app.config['SESSION_REDIS'] = redis
-Session(app)
 
-socketio_kwargs = {}
-
-if os.getenv('FLASK_ENV') == 'production':
-    socketio_kwargs = {
-        **socketio_kwargs,
-    }
-
-
-socketio = SocketIO(
-    app,
-    message_queue=os.getenv('REDIS_URL'),
-    **socketio_kwargs
-)
 
 DEFAULT_SESSION_SETTINGS = {
     'type': 'lightbar',
@@ -52,15 +32,15 @@ def send_static(path):
 
 
 @app.route('/')
-def index():
-    return render_template(
+async def index():
+    return await render_template(
         'index/index.html',
         new_therapist_session=url_for('therapist_session'),
         new_client_session=url_for('new_client_session'))
 
 
 @app.route('/therapist/', methods=['GET', 'POST'])
-def therapist_session():
+async def therapist_session():
     """
     Creates a new session for a therapist if one does not already exist.
     On POST, it forces the creation of a new session (this is how a
@@ -92,29 +72,27 @@ def therapist_session():
         session_id=session_id,
         _external=True)
 
-    return render_template(
+    return await render_template(
         'therapist/session.html',
         session_url=session_url,
         session_id=session_id,
         initial_settings=initial_settings)
 
 
+@app.route('/therapist/settings/', methods=['POST'])
+async def therapist_settings():
+    session_id = session['session_id']
+    redis.set(session_id, await request.data)
+    return '', 200
+
+
 @app.route('/therapist/help/')
-def therapist_help():
-    return render_template('therapist/help.html')
-
-
-@app.route('/session/')
-def new_client_session():
-    if 's' in request.args:
-        return redirect(
-            url_for('client_session', session_id=request.args['s']))
-
-    return render_template('client/index.html')
+async def therapist_help():
+    return await render_template('therapist/help.html')
 
 
 @app.route('/session/<session_id>/')
-def client_session(session_id):
+async def client_session(session_id):
     session_id_needs_help = (
         not session_id.isupper()
         or '-' not in session_id
@@ -127,30 +105,49 @@ def client_session(session_id):
 
         return redirect(url_for('client_session', session_id=session_id))
 
-    existing_settings = bytes.decode((redis.get(session_id)))
+    encoded_existing_settings = redis.get(session_id)
+
+    existing_settings = encoded_existing_settings and bytes.decode(encoded_existing_settings)
 
     if existing_settings is None:
         return abort(404)
 
-    return render_template(
+    return await render_template(
         'client/session.html',
+        session_id=session_id,
         initial_settings=existing_settings)
 
 
 @app.errorhandler(404)
-def page_not_found(e):
-    return render_template('error/404.html')
+async def page_not_found(e):
+    return await render_template('error/404.html')
 
 
-@socketio.on('therapist-new-settings')
-def handle_new_settings(new_settings):
-    session_id = session['session_id']
-    namespace = f'/session/{session_id}/'
-    redis.set(session_id, json.dumps(new_settings))
-    emit('client-new-settings', new_settings, namespace=namespace, broadcast=True)
+@app.route('/session/')
+async def new_client_session():
+    if 's' in request.args:
+        return redirect(
+            url_for('client_session', session_id=request.args['s']))
+
+    return await render_template('client/index.html')
 
 
-if __name__ == '__main__':
-    socketio.run(
-        app,
-        port=os.getenv('PORT', 5000))
+@app.route('/client/settings/<session_id>')
+async def client_settings(session_id):
+    async def send_settings():
+        while True:
+            await sleep(0.25)
+            settings = bytes.decode(redis.get(session_id))
+            message = f"data: {settings}\nevent: \nid: \nretry: \n\r\n\r\n"
+            yield message.encode('utf-8')
+
+    response = await make_response(
+        send_settings(),
+        {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Transfer-Encoding': 'chunked',
+        }
+    )    
+    response.timeout = None
+    return response

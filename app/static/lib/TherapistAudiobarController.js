@@ -2,7 +2,6 @@
     function TherapistAudiobarController(
         audiobar,
         visible,
-        socket,
         pitchContainer,
         speedRange,
         startButton,
@@ -11,7 +10,6 @@
         this.maxSpeed = emdrGetConstant('maxAudioSpeed');
         this.minSpeed = emdrGetConstant('minAudioSpeed');
         this.audiobar = audiobar;
-        this.socket = socket;
         this.pitchContainer = pitchContainer;
         this.speedRange = speedRange;
         this.startButton = startButton;
@@ -43,7 +41,7 @@
     };
 
     TherapistAudiobarController.prototype.emitNewSettings = function() {
-        this.socket.emit('therapist-new-settings', this.audiobar);
+		fetch('/therapist/settings', { method: "POST", credentials: "include", body: JSON.stringify(this.audiobar)});
     };
 
     TherapistAudiobarController.prototype.handleInitialSettings = function(initialSettings) {

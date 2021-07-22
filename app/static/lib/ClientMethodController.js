@@ -7,8 +7,17 @@
         this.lightbarController = lightbarController;
         this.audiobarController = audiobarController;
 
-        const socket = io(window.location.href);
-        socket.on('client-new-settings', this.handleNewSettings.bind(this));
+        window.addEventListener('load', () => {
+            const eventSource = new EventSource(`/client/settings/${window.sessionId}`);
+            eventSource.addEventListener('publish', console.log);
+            eventSource.onpublish = (e) => console.log('open!', e);
+            eventSource.onerror = console.error;
+            eventSource.onmessage = (event) => {
+                const settings = JSON.parse(event.data);
+                console.log(settings);
+                this.handleNewSettings(settings);
+            }
+        })
         this.handleNewSettings(initialSettings);
     }
 
