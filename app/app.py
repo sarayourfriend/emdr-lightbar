@@ -10,7 +10,7 @@ from flask_socketio import SocketIO, emit
 from flask_session import Session
 from redis import Redis
 
-from utils import new_session_id
+from .utils import new_session_id
 
 dotenv.load_dotenv()
 
