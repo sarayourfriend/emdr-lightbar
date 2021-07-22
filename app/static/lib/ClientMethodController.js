@@ -8,9 +8,10 @@
         this.audiobarController = audiobarController;
 
         window.addEventListener('load', () => {
-            const eventSource = new EventSource(`/client/settings/${window.sessionId}`);
+            const eventSource = new EventSource(`/client/settings/${window.sessionId}/`);
             eventSource.onmessage = (event) => {
                 const settings = JSON.parse(event.data);
+                console.log(settings);
                 this.handleNewSettings(settings);
             }
         })

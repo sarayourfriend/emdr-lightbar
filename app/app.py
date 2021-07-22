@@ -3,7 +3,7 @@ import json
 
 import dotenv
 from quart import Quart, request, redirect, send_from_directory, session, render_template, url_for, abort, make_response
-from redis import Redis
+from quart_redis import RedisHandler, get_redis
 from asyncio import sleep
 
 from .utils import new_session_id
@@ -12,7 +12,8 @@ dotenv.load_dotenv()
 
 app = Quart(__name__)
 app.secret_key = os.getenv('QUART_SECRET_KEY')
-redis = Redis.from_url(os.getenv('REDIS_URL'))
+app.config['REDIS_URI'] = os.getenv('REDIS_URL')
+RedisHandler(app)
 
 
 DEFAULT_SESSION_SETTINGS = {
@@ -51,17 +52,19 @@ async def therapist_session():
         or request.method == 'POST'
     )
 
+    redis = get_redis()
+
     initial_settings = None
     if should_create_new_session:
         if 'session_id' in session:
             # clear the existing session settings
-            redis.delete(session['session_id'])
+            await redis.delete(session['session_id'])
 
         session_id = new_session_id()
         session['session_id'] = session_id
     else:
         session_id = session['session_id']
-        initial_settings = redis.get(session_id)
+        initial_settings = await redis.get(session_id)
 
     if initial_settings is None:
         initial_settings = DEFAULT_SESSION_SETTINGS_SERIALIZED
@@ -84,6 +87,7 @@ async def therapist_session():
 @app.route('/therapist/settings/', methods=['POST'])
 async def therapist_settings():
     session_id = session['session_id']
+    redis = get_redis()
     redis.set(session_id, await request.data)
     return '', 200
 
@@ -107,7 +111,8 @@ async def client_session(session_id):
 
         return redirect(url_for('client_session', session_id=session_id))
 
-    encoded_existing_settings = redis.get(session_id)
+    redis = get_redis()
+    encoded_existing_settings = await redis.get(session_id)
 
     existing_settings = encoded_existing_settings and bytes.decode(encoded_existing_settings)
 
@@ -137,11 +142,12 @@ async def new_client_session():
 @app.route('/client/settings/<session_id>')
 async def client_settings(session_id):
     async def send_settings():
-        while True:
-            await sleep(0.25)
-            settings = bytes.decode(redis.get(session_id))
+        redis = get_redis()
+        while encoded_settings := await redis.get(session_id):
+            settings = bytes.decode(encoded_settings)
             message = f"data: {settings}\nevent: \nid: \nretry: \n\r\n\r\n"
             yield message.encode('utf-8')
+            await sleep(0.25)
 
     response = await make_response(
         send_settings(),

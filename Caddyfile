@@ -1,0 +1,5 @@
+localhost {
+	reverse_proxy localhost:5000 {
+		flush_interval -1
+	}
+}
