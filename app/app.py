@@ -4,6 +4,7 @@ import json
 import dotenv
 from quart import Quart, request, redirect, send_from_directory, session, render_template, url_for, abort, make_response
 from quart_redis import RedisHandler, get_redis
+from quart_cors import cors
 from asyncio import sleep
 
 from .utils import new_session_id
@@ -84,7 +85,7 @@ async def therapist_session():
         initial_settings=initial_settings)
 
 
-@app.route('/therapist/settings/', methods=['POST'])
+@app.route('/therapist/settings/', methods=['POST'], strict_slashes=False)
 async def therapist_settings():
     session_id = session['session_id']
     redis = get_redis()
@@ -97,7 +98,7 @@ async def therapist_help():
     return await render_template('therapist/help.html')
 
 
-@app.route('/session/<session_id>/')
+@app.route('/session/<session_id>/', strict_slashes=False)
 async def client_session(session_id):
     session_id_needs_help = (
         not session_id.isupper()
@@ -139,7 +140,7 @@ async def new_client_session():
     return await render_template('client/index.html')
 
 
-@app.route('/client/settings/<session_id>')
+@app.route('/client/settings/<session_id>', strict_slashes=False)
 async def client_settings(session_id):
     async def send_settings():
         redis = get_redis()
