@@ -1,4 +1,9 @@
 .PHONY: rundev
 rundev:
-	gunicorn --bind=0.0.0.0:5000 --workers=1 --worker-class eventlet --reload app.app:app
+	hypercorn --bind=0.0.0.0:5000 --workers=1 app.app:app --reload --access-log -
 
+
+runprod:
+	docker-compose build
+	docker-compose up -d
+	caddy reload

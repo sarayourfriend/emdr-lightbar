@@ -6,9 +6,10 @@ services:
     links:
       - redis
     ports:
-      - 80:5000
+      - 5000:5000
     environment:
       REDIS_URL: redis://redis
+      QUART_SECRET_KEY: "${QUART_SECRET_KEY}"
     networks:
       - lightbar
 
