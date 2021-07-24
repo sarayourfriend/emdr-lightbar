@@ -148,7 +148,7 @@ Audiobar.prototype.startSound = function () {
 	this.gain.gain.setValueAtTime(0.000001, this.audioContext.currentTime);
 	this.oscillator.start();
 	this.gain.gain.linearRampToValueAtTime(
-		0.9,
+		0.25,
 		this.audioContext.currentTime + 0.5
 	);
 
