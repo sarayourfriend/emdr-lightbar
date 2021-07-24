@@ -22,6 +22,20 @@ const PITCHES = {
 const IS_SAFARI = !window.AudioContext && window.webkitAudioContext;
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
+function makeDistortionCurve(amount) {
+	var k = typeof amount === "number" ? amount : 50,
+		n_samples = 44100,
+		curve = new Float32Array(n_samples),
+		deg = Math.PI / 180,
+		i = 0,
+		x;
+	for (; i < n_samples; ++i) {
+		x = (i * 2) / n_samples - 1;
+		curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+	}
+	return curve;
+}
+
 function Audiobar(rootElement, initialData) {
 	this.rootElement = rootElement;
 	this.render();
@@ -107,11 +121,15 @@ Audiobar.prototype.updateSettings = function (newSettings) {
 Audiobar.prototype.startSound = function () {
 	this.oscillator = this.audioContext.createOscillator();
 	this.panner = this.audioContext.createStereoPanner();
+	this.distortion = this.audioContext.createWaveShaper();
+	this.distortion.curve = makeDistortionCurve(1000);
+	this.distortion.oversample = "4x";
 	this.gain = this.audioContext.createGain();
 	this.oscillator.type = "sine";
 	this.oscillator
 		.connect(this.panner)
 		.connect(this.gain)
+		.connect(this.distortion)
 		.connect(this.audioContext.destination);
 
 	// keep the existing side if it's there
