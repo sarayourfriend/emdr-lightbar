@@ -1,7 +1,6 @@
 {% extends "layouts/base.html" %}
 {% block css %}
-    <link rel="stylesheet" href="/static/lib/Lightbar.css" />
-    <link rel="stylesheet" href="/static/lib/Audiobar.css" />
+    <link rel="stylesheet" href="/static/dist/client-session.css" />
 {% endblock %}
 
 {% block content %}
@@ -12,10 +11,5 @@
 {% block scripts %}
     {{ super() }}
     <script>window.sessionId = '{{ session_id }}';</script>
-    <script src="/static/lib/Lightbar.js"></script>
-    <script src="/static/lib/Audiobar.js"></script>
-    <script src="/static/lib/ClientLightbarController.js"></script>
-    <script src="/static/lib/ClientAudiobarController.js"></script>
-    <script src="/static/lib/ClientMethodController.js"></script>
-    <script src="/static/client-session.js"></script>
+    <script src="/static/dist/client-session.js"></script>
 {% endblock %}

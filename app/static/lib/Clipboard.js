@@ -1,49 +1,38 @@
 /**
- * From https://gist.github.com/rproenca/64781c6a1329b48a455b645d361a9aa3
+ * Adapted from https://gist.github.com/rproenca/64781c6a1329b48a455b645d361a9aa3
  */
-window.Clipboard = (function(window, document, navigator) {
-    var textArea,
-        copy;
+function isOS() {
+	return navigator.userAgent.match(/ipad|iphone/i);
+}
 
-    function isOS() {
-        return navigator.userAgent.match(/ipad|iphone/i);
-    }
+function createTextArea(text) {
+	const textarea = document.createElement("textarea");
+	textarea.value = text;
+	textarea.readonly = true;
+	document.body.appendChild(textarea);
+	return textarea;
+}
 
-    function createTextArea(text) {
-        textArea = document.createElement('textArea');
-        textArea.value = text;
-        textArea.readonly = true;
-        document.body.appendChild(textArea);
-    }
+function selectText(textarea) {
+	if (isOS()) {
+		const range = document.createRange();
+		range.selectNodeContents(textarea);
+		const selection = window.getSelection();
+		selection.removeAllRanges();
+		selection.addRange(range);
+		textarea.setSelectionRange(0, 999999);
+	} else {
+		textarea.select();
+	}
+}
 
-    function selectText() {
-        var range,
-            selection;
+function copyToClipboard(textarea) {
+	document.execCommand("copy");
+	document.body.removeChild(textarea);
+}
 
-        if (isOS()) {
-            range = document.createRange();
-            range.selectNodeContents(textArea);
-            selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            textArea.setSelectionRange(0, 999999);
-        } else {
-            textArea.select();
-        }
-    }
-
-    function copyToClipboard() {
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-    }
-
-    copy = function(text) {
-        createTextArea(text);
-        selectText();
-        copyToClipboard();
-    };
-
-    return {
-        copy: copy
-    };
-})(window, document, navigator);
+export function copy(text) {
+	const textarea = createTextArea(text);
+	selectText(textarea);
+	copyToClipboard(textarea);
+}
