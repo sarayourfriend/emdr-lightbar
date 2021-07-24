@@ -35,28 +35,38 @@ Start the light's movement as a therapist by clicking the "Start" button. If you
 
 ## Technology used
 
-*   Flask for the backend
+*   Quart for the backend
     *   The backend for this is so simple there's no real reason to use anything heavier. Even if we keep adding more controls for the therapist, that will only increase the complexity of the front-end as we can continue to use the same generic "<actor>-new-settings" events to send and receive any arbitrary new settings we want.
+    *   Quart is used over Flask due to its superior support for SSEs
 *   Vanilla JS, HTML and CSS for the frontend
     *   Even though this is going to make theming a little bit of a drag, the functionality of the frontend is so simple that there's really no call for any kind of UI, state, or style management library
     *   I think that if the application became complex enough such that it would benefit greatly from the usage of such technologies, we might be adding too many features to it
-*   SocketIO because it's not necessary to invent a new websocket protocol for this
+*   Server Sent Events
+    * The therapist makes a POST request each time the settings change and the client receives the new settings via an EventSource.
 
 ## Running
 
-Install Docker, and then a simple `docker-compose up` will run the application on port 80 of localhost with nginx in front of four workers, each with uWSGI and gevent.
+Install Docker, and then a simple `docker-compose up` will run the application on port 5000 with four workers and redis included.
 
 # Development
 
 To run locally:
 
-1.  Install python3
-2.  Clone the repo
-3.  Create a venv: `python3 -m venv venv`
-4.  Initialize the venv: `. venv/bin/activate`
-5.  Install dependencies: `pip install -r requirements.txt`
-6.  Add a `.env` file with `FLASK_SECRET_KEY` set to something (can be anything in dev)
-7.  Run the Flask development server: `env FLASK_ENV=development python ./app/app.py`
+1.  Install python3.9
+1.  Clone the repo
+1.  Install Redis
+1.  Create a venv: `python3.9 -m venv venv`
+1.  Initialize the venv: `source venv/bin/activate`
+1.  Install dependencies: `make install`
+1.  Generate the `.env` file and fill it in: `make .env`
+1.  Run the development server: `make rundev`
+
+# Production
+
+To deploy the application:
+
+1. On your server, run `docker-compose build && docker-compose up -d`
+1. Use some sort of reverse proxy like nginx or caddy to point to the service. A `Caddyfile` is provided as an example.
 
 # Tech TODOs
 
