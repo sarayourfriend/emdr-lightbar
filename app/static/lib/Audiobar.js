@@ -1,8 +1,8 @@
 import "./Audiobar.css";
 
 // @todo fix popping while panning
-const LEFT_SIDE = -0.5;
-const RIGHT_SIDE = 0.5;
+const LEFT_SIDE = -1;
+const RIGHT_SIDE = 1;
 
 // in Hz
 const PITCHES = {
@@ -35,8 +35,6 @@ function Audiobar(rootElement, initialData) {
 	);
 
 	this.initAudio();
-
-	this.bounceAudio = this.bounceAudio.bind(this);
 }
 
 Audiobar.prototype.render = function () {
@@ -58,12 +56,12 @@ Audiobar.prototype.getPitches = function () {
 	return PITCHES;
 };
 
-Audiobar.prototype.setPitch = function (toPitchByName) {
-	this.data.pitch = PITCHES[toPitchByName];
+Audiobar.prototype.setPitch = function (toPitch) {
+	this.data.pitch = toPitch;
 
 	if (this.interval) {
 		this.oscillator.frequency.setTargetAtTime(
-			this.data.pitch,
+			PITCHES[this.data.pitch],
 			this.audioContext.currentTime,
 			0.02
 		);
@@ -75,7 +73,10 @@ Audiobar.prototype.setSpeed = function (toSpeed) {
 	if (this.data.isStarted) {
 		// restart the interval with the new speed
 		window.clearInterval(this.interval);
-		this.interval = window.setInterval(this.bounceAudio, this.data.speed);
+		this.interval = window.setInterval(
+			() => this.bounceAudio(),
+			this.data.speed
+		);
 	}
 };
 
@@ -89,6 +90,12 @@ Audiobar.prototype.toJSON = function () {
 };
 
 Audiobar.prototype.updateSettings = function (newSettings) {
+	if (JSON.stringify(newSettings) === JSON.stringify(this)) {
+		console.info("updateSettings: settings are unchanged");
+		return;
+	}
+	console.info("updateSettings: setting new settings", newSettings);
+
 	this.setSpeed(newSettings.speed);
 	this.setPitch(newSettings.pitch);
 
@@ -122,7 +129,10 @@ Audiobar.prototype.startSound = function () {
 		this.audioContext.currentTime + 0.5
 	);
 
-	this.interval = window.setInterval(this.bounceAudio, this.data.speed);
+	this.interval = window.setInterval(
+		() => this.bounceAudio(),
+		this.data.speed
+	);
 };
 
 Audiobar.prototype.setIndicator = function (indicator, on) {
