@@ -20,15 +20,12 @@ This app solves the problem by allowing a therapist to share a short link with a
 
 You can create a session as a therapist and connect as a client. Once you have access to the app, follow the instructions on the index page to set up a therapist and client session.
 
-Start the light's movement as a therapist by clicking the "Start" button. If you open the session URL in a private tab, and change the settings in the therapist tab, you should see them immediately reflected in the client tab.
-
-**Note:** Both tabs must be open before the therapist begins modifying the lightbar behavior or else the settings will potentially start out of sync. Changing the settings just one time once both the therapist and the client are connected will sync the settings. After the first time, they will continue to stay in sync.
+Start the light's movement as a therapist by clicking the "Start" button. If you open the session URL in another browser window, and change the settings in the therapist window, you should see them immediately reflected in the client window.
 
 ## Feature Roadmap
 
 1.  The therapist is able to control the background color of the page as well as the color of the lightbar outline and light itself
     *   When displaying the current "theme" to the therapist, the controls on the page should not be affected. This will cut the scope of the theming ability so we don't need to worry about the contrast of the controls' text—they'll simply always be black text on a white background
-    *   We should be able to implement a dark-mode setting in the future to accomodate OS/browser level dark-mode settings
 2.  The therapist is able to control the width of the lightbar itself
 3.  Make the site prettier in general
 4.  Allow client to control audio volume and pitch? And speed?
