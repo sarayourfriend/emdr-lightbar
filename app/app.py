@@ -4,8 +4,7 @@ import json
 import dotenv
 from quart import Quart, request, redirect, send_from_directory, session, render_template, url_for, abort, make_response
 from quart_redis import RedisHandler, get_redis
-from quart_cors import cors
-from asyncio import sleep
+from asyncio import sleep, ensure_future
 
 from .utils import new_session_id
 
@@ -29,8 +28,8 @@ DEFAULT_SESSION_SETTINGS_SERIALIZED = json.dumps(DEFAULT_SESSION_SETTINGS)
 
 
 @app.route('/static/<path:path>')
-def send_static(path):
-    return send_from_directory('static', path)
+async def send_static(path):
+    return await send_from_directory('static', path)
 
 
 @app.route('/')
@@ -62,6 +61,10 @@ async def therapist_session():
             await redis.delete(session['session_id'])
 
         session_id = new_session_id()
+        # However unlikely it is, ensure that we don't have colliding session IDs
+        while await redis.get(session_id):
+            session_id = new_session_id()
+
         session['session_id'] = session_id
     else:
         session_id = session['session_id']
@@ -69,7 +72,7 @@ async def therapist_session():
 
     if initial_settings is None:
         initial_settings = DEFAULT_SESSION_SETTINGS_SERIALIZED
-        redis.set(session_id, initial_settings)
+        ensure_future(redis.set(session_id, initial_settings))
     else:
         initial_settings = bytes.decode(initial_settings)
 
@@ -89,7 +92,7 @@ async def therapist_session():
 async def therapist_settings():
     session_id = session['session_id']
     redis = get_redis()
-    redis.set(session_id, await request.data)
+    ensure_future(redis.set(session_id, await request.data))
     return '', 200
 
 
