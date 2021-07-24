@@ -1,8 +1,8 @@
 import "./Audiobar.css";
 
 // @todo fix popping while panning
-const LEFT_SIDE = -0.5;
-const RIGHT_SIDE = 0.5;
+const LEFT_SIDE = -1;
+const RIGHT_SIDE = 1;
 
 // in Hz
 const PITCHES = {
@@ -22,6 +22,20 @@ const PITCHES = {
 const IS_SAFARI = !window.AudioContext && window.webkitAudioContext;
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
+function makeDistortionCurve(amount) {
+	var k = typeof amount === "number" ? amount : 50,
+		n_samples = 44100,
+		curve = new Float32Array(n_samples),
+		deg = Math.PI / 180,
+		i = 0,
+		x;
+	for (; i < n_samples; ++i) {
+		x = (i * 2) / n_samples - 1;
+		curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+	}
+	return curve;
+}
+
 function Audiobar(rootElement, initialData) {
 	this.rootElement = rootElement;
 	this.render();
@@ -29,14 +43,12 @@ function Audiobar(rootElement, initialData) {
 		{
 			isStarted: false,
 			speed: 1000,
-			pitch: PITCHES.D4,
+			pitch: "D4",
 		},
 		initialData
 	);
 
 	this.initAudio();
-
-	this.bounceAudio = this.bounceAudio.bind(this);
 }
 
 Audiobar.prototype.render = function () {
@@ -58,12 +70,12 @@ Audiobar.prototype.getPitches = function () {
 	return PITCHES;
 };
 
-Audiobar.prototype.setPitch = function (toPitchByName) {
-	this.data.pitch = PITCHES[toPitchByName];
+Audiobar.prototype.setPitch = function (toPitch) {
+	this.data.pitch = toPitch;
 
 	if (this.interval) {
 		this.oscillator.frequency.setTargetAtTime(
-			this.data.pitch,
+			PITCHES[this.data.pitch],
 			this.audioContext.currentTime,
 			0.02
 		);
@@ -75,7 +87,10 @@ Audiobar.prototype.setSpeed = function (toSpeed) {
 	if (this.data.isStarted) {
 		// restart the interval with the new speed
 		window.clearInterval(this.interval);
-		this.interval = window.setInterval(this.bounceAudio, this.data.speed);
+		this.interval = window.setInterval(
+			() => this.bounceAudio(),
+			this.data.speed
+		);
 	}
 };
 
@@ -89,6 +104,12 @@ Audiobar.prototype.toJSON = function () {
 };
 
 Audiobar.prototype.updateSettings = function (newSettings) {
+	if (JSON.stringify(newSettings) === JSON.stringify(this)) {
+		console.info("updateSettings: settings are unchanged");
+		return;
+	}
+	console.info("updateSettings: setting new settings", newSettings);
+
 	this.setSpeed(newSettings.speed);
 	this.setPitch(newSettings.pitch);
 
@@ -100,11 +121,15 @@ Audiobar.prototype.updateSettings = function (newSettings) {
 Audiobar.prototype.startSound = function () {
 	this.oscillator = this.audioContext.createOscillator();
 	this.panner = this.audioContext.createStereoPanner();
+	this.distortion = this.audioContext.createWaveShaper();
+	this.distortion.curve = makeDistortionCurve(1000);
+	this.distortion.oversample = "4x";
 	this.gain = this.audioContext.createGain();
 	this.oscillator.type = "sine";
 	this.oscillator
 		.connect(this.panner)
 		.connect(this.gain)
+		.connect(this.distortion)
 		.connect(this.audioContext.destination);
 
 	// keep the existing side if it's there
@@ -113,6 +138,11 @@ Audiobar.prototype.startSound = function () {
 	}
 	// "bounce" it once to initialize it to the left side
 	this.bounceAudio();
+	this.oscillator.frequency.setTargetAtTime(
+		PITCHES[this.data.pitch],
+		this.audioContext.currentTime,
+		0.02
+	);
 
 	// prevent popping on start by starting at a small volume and then ramping it up
 	this.gain.gain.setValueAtTime(0.000001, this.audioContext.currentTime);
@@ -122,7 +152,10 @@ Audiobar.prototype.startSound = function () {
 		this.audioContext.currentTime + 0.5
 	);
 
-	this.interval = window.setInterval(this.bounceAudio, this.data.speed);
+	this.interval = window.setInterval(
+		() => this.bounceAudio(),
+		this.data.speed
+	);
 };
 
 Audiobar.prototype.setIndicator = function (indicator, on) {

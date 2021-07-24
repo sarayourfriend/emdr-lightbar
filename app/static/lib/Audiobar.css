@@ -1,7 +1,7 @@
 #audio-container {
     display: flex;
     margin: auto;
-    width: 40em;
+    max-width: 40em;
     align-items: center;
     justify-content: space-between;
 }
