@@ -70,8 +70,4 @@ To deploy the application:
 
 # Tech TODOs
 
-*   [ ] Minify/mangle JS and CSS and run through babel so we can use fully modern JS
-*   [ ] Prevent session URL collisions
-*   [ ] Mobile view (especially of the audio indicators)
 *   [ ] Add step-by-step guide to therapist help page
-*   [ ] Fix audio panning on Safari
