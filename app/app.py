@@ -62,6 +62,10 @@ async def therapist_session():
             await redis.delete(session['session_id'])
 
         session_id = new_session_id()
+        # However unlikely it is, ensure that we don't have colliding session IDs
+        while await redis.get(session_id):
+            session_id = new_session_id()
+
         session['session_id'] = session_id
     else:
         session_id = session['session_id']
