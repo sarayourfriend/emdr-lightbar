@@ -43,7 +43,7 @@ function Audiobar(rootElement, initialData) {
 		{
 			isStarted: false,
 			speed: 1000,
-			pitch: PITCHES.D4,
+			pitch: "D4",
 		},
 		initialData
 	);
@@ -138,6 +138,11 @@ Audiobar.prototype.startSound = function () {
 	}
 	// "bounce" it once to initialize it to the left side
 	this.bounceAudio();
+	this.oscillator.frequency.setTargetAtTime(
+		PITCHES[this.data.pitch],
+		this.audioContext.currentTime,
+		0.02
+	);
 
 	// prevent popping on start by starting at a small volume and then ramping it up
 	this.gain.gain.setValueAtTime(0.000001, this.audioContext.currentTime);
