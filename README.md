@@ -45,7 +45,7 @@ Start the light's movement as a therapist by clicking the "Start" button. If you
 
 Install Docker, and then a simple `docker-compose up` will run the application on port 5000 with four workers and redis included.
 
-# Development
+### Development
 
 To run locally:
 
@@ -58,7 +58,7 @@ To run locally:
 1.  Generate the `.env` file and fill it in: `make .env`
 1.  Run the development server: `make rundev`
 
-# Production
+### Production
 
 To deploy the application:
 
