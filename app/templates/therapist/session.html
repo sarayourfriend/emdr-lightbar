@@ -1,8 +1,6 @@
 {% extends "layouts/base.html" %}
 {% block css %}
-    <link rel="stylesheet" href="/static/therapist-session.css" />
-    <link rel="stylesheet" href="/static/lib/Lightbar.css" />
-    <link rel="stylesheet" href="/static/lib/Audiobar.css" />
+    <link rel="stylesheet" href="/static/dist/therapist-session.css" />
 {% endblock %}
 
 {% block content %}
@@ -27,11 +25,5 @@
 
 {% block scripts %}
     {{ super() }}
-    <script src="/static/lib/Clipboard.js"></script>
-    <script src="/static/lib/Lightbar.js"></script>
-    <script src="/static/lib/Audiobar.js"></script>
-    <script src="/static/lib/TherapistLightbarController.js"></script>
-    <script src="/static/lib/TherapistAudiobarController.js"></script>
-    <script src="/static/lib/TherapistMethodController.js"></script>
-    <script src="/static/therapist-session.js"></script>
+    <script src="/static/dist/therapist-session.js"></script>
 {% endblock %}
