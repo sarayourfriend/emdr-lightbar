@@ -2,8 +2,9 @@ import os
 import json
 
 import dotenv
-from quart import Quart, request, redirect, send_from_directory, session, render_template, url_for, abort, make_response
+from quart import Quart, request, redirect, jsonify, send_from_directory, session, render_template, url_for, abort, make_response
 from quart_redis import RedisHandler, get_redis
+from quart_cors import cors
 from asyncio import sleep, ensure_future
 
 from .utils import new_session_id
@@ -14,6 +15,8 @@ app = Quart(__name__)
 app.secret_key = os.getenv('QUART_SECRET_KEY')
 app.config['REDIS_URI'] = os.getenv('REDIS_URL')
 RedisHandler(app)
+# we have to allow all origins for the mobile app to work
+cors(app, allow_origin="*")
 
 
 DEFAULT_SESSION_SETTINGS = {
@@ -106,12 +109,15 @@ async def client_session(session_id):
     session_id_needs_help = (
         not session_id.isupper()
         or '-' not in session_id
-        or len(session_id) != 7    
+        or len(session_id) == 6
     )
     if session_id_needs_help:
         session_id = session_id.upper().replace(' ', '-')
-        if len(session_id) != 7:
+        if len(session_id) == 6:
             session_id = f'{session_id[:3]}-{session_id[3:]}'
+
+        if len(session_id) != 7:
+            return abort(404)
 
         return redirect(url_for('client_session', session_id=session_id))
 
@@ -123,6 +129,14 @@ async def client_session(session_id):
     if existing_settings is None:
         return abort(404)
 
+    if request.content_type == 'application/json':
+        return jsonify(
+            {
+                "session_id": session_id,
+                "initial_settings": json.loads(existing_settings),
+            }
+        ), 200
+
     return await render_template(
         'client/session.html',
         session_id=session_id,
@@ -131,6 +145,8 @@ async def client_session(session_id):
 
 @app.errorhandler(404)
 async def page_not_found(e):
+    if request.content_type == 'application/json':
+        return {}, 404
     return await render_template('error/404.html')
 
 
@@ -160,6 +176,6 @@ async def client_settings(session_id):
             'Cache-Control': 'no-cache',
             'Transfer-Encoding': 'chunked',
         }
-    )    
+    )
     response.timeout = None
     return response

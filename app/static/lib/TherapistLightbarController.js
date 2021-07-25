@@ -89,6 +89,7 @@ TherapistLightbarController.prototype.toggleBounce = function () {
 		const callback = function () {
 			this.startButton.innerText = "Start";
 			this.startButton.disabled = false;
+			this.emitNewSettings();
 		}.bind(this);
 		this.lightbar.stopBounce(callback);
 	} else {
