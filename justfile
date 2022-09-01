@@ -5,7 +5,6 @@ rundev:
 reloadprod:
 	docker-compose build
 	docker-compose up -d
-	caddy reload
 
 
 install:
