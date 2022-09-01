@@ -1,5 +1,7 @@
 # EMDR Lightbar
 
+> EMDR Lightbar development has moved to <https://git.sr.ht/~sara/emdr-lightbar>. This repository is archived and no longer active.
+
 A simple EMDR lightbar app for therapists to be able to do EMDR therapy with remote clients.
 
 This was inspired by my own therapist's remarks during our first therapy session at the start of the 2020 Coronavirus lockdown in the US and my own desire to be able to continue EMDR therapy during the quarantine.
